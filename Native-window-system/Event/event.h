@@ -42,8 +42,8 @@ namespace SF {
         //METHODE COMMUNE
         template <typename T>
         const T GetIf() {
-            if (IsType(T)) {
-                As(T);
+            if (IsType<T>()) {
+                As<T>();
             }
             return nullptr;
         }
