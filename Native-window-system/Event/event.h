@@ -5,7 +5,7 @@
 namespace SF {
     enum class EventType {
         KeyUp, windowResize, mouseRelease,
-        mouseMove, mouseclick, keydown
+        mouseMove, mouseclick, keydown, windowClosed
     };
 
     enum class Keycode {
@@ -24,26 +24,36 @@ namespace SF {
     {
     protected:
         EventType m_Type;
+        uint32_t id;
         bool m_handled;
     public:
-        Event(EventType type) : m_Type(type), m_handled(false) {}
+        Event(EventType type, uint16_t Id) : m_Type(type), m_handled(false), id(Id) {}
         virtual ~Event() = default;
 
         //GETTERS
         EventType GetType() { return m_Type; }
+        uint16_t GetId() { return id; }
         bool IsHandle() { return m_handled; }
 
         //SETTERS
         void SetHandle() { m_handled = true; }
         template <typename T> bool IsType() { return m_Type == T::GetStaticType(); }
         template <typename T> T& As() { return *static_cast<T*>(this); }
-        template <typename T> T& As() const { return *static_cast<const T*>(this); }
+        template <typename T> const T& As() const { return *static_cast<const T*>(this); }
 
         //METHODE COMMUNE
         template <typename T>
-        const T GetIf() {
+        const T* GetIf() const {
             if (IsType<T>()) {
-                As<T>();
+                return& As<T>();
+            }
+            return nullptr;
+        }
+
+        template <typename T>
+        T* GetIf() {
+            if (IsType<T>()) {
+                return& As<T>();
             }
             return nullptr;
         }
@@ -57,6 +67,16 @@ namespace SF {
      */
 
     /**
+     * EVENEMENT DE FERMETURE DE LA FENETRE
+     */
+    class WindowClosedEvent : public Event {
+        public:
+        WindowClosedEvent(uint32_t id): Event(EventType::windowClosed, id) {}
+
+        static EventType GetStaticType() { return EventType::windowClosed; }
+    };
+
+    /**
       * EVENEMENT DE REDIMENSIONNEMENT DE FENETRE
       */
     class WindowResizeEvent : public Event {
@@ -65,13 +85,13 @@ namespace SF {
 
         public:
         //constructeur
-        WindowResizeEvent(uint32_t nW, uint32_t nH): Event(EventType::windowResize), m_width(nW), m_height(nH) {}
+        WindowResizeEvent(uint32_t nW, uint32_t nH, uint32_t id): Event(EventType::windowResize, id), m_width(nW), m_height(nH) {}
 
         //GETTERS
         uint32_t GetWidth() { return m_width; }
         uint32_t GetHeight() { return m_height; }
 
-        EventType GetStaticType() { return EventType::windowResize; }
+        static EventType GetStaticType() { return EventType::windowResize; }
     };
 
     /**
@@ -86,25 +106,25 @@ namespace SF {
 
         public:
         //constructeur
-        KeyPressedEvent(Keycode key, bool repeat = false)
-            : Event(EventType::keydown), keyCode(key), repeated(repeat) {}
+        KeyPressedEvent(Keycode key, uint32_t id,bool repeat = false)
+            : Event(EventType::keydown, id), keyCode(key), repeated(repeat) {}
 
         //GETTERS
-        Keycode GetKeyCode() { return keyCode; }
-        bool IsRepeated() { return repeated; }
+        Keycode GetKeyCode() const { return keyCode; }
+        bool IsRepeated() const { return repeated; }
         static EventType GetStaticType() { return EventType::keydown; }
     };
 
     /**
      * RELACHEMENT DE LA TOUCHE
-     */
+    */
     class KeyReleaseEvent : public Event {
         private:
         Keycode KeyCode;
 
         public:
         //constructeur
-        KeyReleaseEvent(Keycode key): Event(EventType::KeyUp), KeyCode(key) {}
+        KeyReleaseEvent(Keycode key, uint32_t id): Event(EventType::KeyUp, id), KeyCode(key) {}
 
         //GETTERS
         Keycode GetKeyCode() { return KeyCode; }
@@ -121,8 +141,8 @@ namespace SF {
         float posY;
 
         public:
-        MouseMoveEvent(float x, float y)
-            :Event(EventType::mouseMove), posX(x), posY(y) {}
+        MouseMoveEvent(float x, float y, uint32_t id)
+            :Event(EventType::mouseMove, id), posX(x), posY(y) {}
         
         //GETTERS
         float GetPosX() { return posX; }
@@ -139,8 +159,8 @@ namespace SF {
 
         public:
         //constructeur
-        MouseClickEvent(float x, float y, MouseButton btn) 
-            :Event(EventType::mouseclick), posX(x), posY(y), button(btn) {}
+        MouseClickEvent(float x, float y, MouseButton btn, uint32_t id) 
+            :Event(EventType::mouseclick, id), posX(x), posY(y), button(btn) {}
         
         //GETTERS
         float GetPosX() { return posX; }
@@ -158,8 +178,8 @@ namespace SF {
 
         public:
         //constructeur
-        MouseReleaseEvent(float x, float y, MouseButton btn) 
-            :Event(EventType::mouseRelease), posX(x), posY(y), button(btn) {}
+        MouseReleaseEvent(float x, float y, MouseButton btn, uint32_t id) 
+            :Event(EventType::mouseRelease, id), posX(x), posY(y), button(btn) {}
         
         //GETTERS
         float GetPosX() { return posX; }

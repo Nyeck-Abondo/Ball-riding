@@ -7,6 +7,7 @@
 #include <vector>
 #include <typeindex>
 #include <algorithm>
+#include "../Window-manager/Window-manager.h"
 
 
 /**
@@ -23,6 +24,7 @@ namespace SF {
         public:
         //CONSTRUCTEUR
         EventTracker();
+
         operator bool() {
             return m_currentEvent != nullptr;
         }
@@ -36,7 +38,7 @@ namespace SF {
         }
 
         /**
-         * @brief operateur d'indirection pour qcces direct au event
+         * @brief operateur d'indirection pour acces direct au event
          * @return reference vers l'evenement courant
          */
         Event& operator*() {

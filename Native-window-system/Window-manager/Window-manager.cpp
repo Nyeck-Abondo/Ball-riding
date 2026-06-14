@@ -1,4 +1,5 @@
 #include "Window-manager.h"
+#include "../window.h"
 
 namespace SF {
     
@@ -35,7 +36,9 @@ namespace SF {
     void WindowManager::ProcessAllEvents() {
         std::lock_guard<std::mutex> guard(m_mutex);
         for (auto& win : m_windowRegister) {
-            win->ProcessEvent();
+            if (win->IsOpen()) {
+                win->ProcessEvent();
+            }
         }
     }
 

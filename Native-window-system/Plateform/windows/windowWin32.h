@@ -2,6 +2,7 @@
 #include "../window.h"
 #include <cstdint>
 #include <windows.h>
+#include <windowsx.h>
 #include <string>
 #include "../../Window-manager/Window-manager.h"
 
@@ -41,7 +42,11 @@ namespace SF {
          */
         void Shutdown() override;
 
-
+        /**
+         * @brief Verifie si la fenetre est encore ouverte
+         * @return true si la fenetre est ouverte et false sinon
+         */
+        bool IsOpen() override;
 
         /**
          * @brief Recupere les evenements detectés
@@ -59,6 +64,11 @@ namespace SF {
          * @brief Présente le tableau de pixel coloré dans la fenètre
          */
         void Present();
+
+        /**
+         * donne un etat d'ouverture et de fermeture
+         */
+        void SetOpen();
 
         /**
          * 2

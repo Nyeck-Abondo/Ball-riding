@@ -1,9 +1,11 @@
-#include "../Plateform/window.h"
+#pragma once
+
 #include <mutex>
 #include <vector>
 #include <cstdint>
 
 namespace SF {
+    class Window;
     
     class WindowManager {
 

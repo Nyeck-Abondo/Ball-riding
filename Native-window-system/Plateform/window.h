@@ -42,6 +42,11 @@ namespace SF {
          */
         virtual void Shutdown() = 0;
 
+        /**
+         * @brief Verifie si la fenetre est encore ouverte
+         * @return true si la fenetre est ouverte et false sinon
+         */
+        virtual bool IsOpen() = 0;
 
         /**
          * traite les evenements en lien avec la fenetre
@@ -60,6 +65,10 @@ namespace SF {
          */
         virtual void Present() = 0;
 
+        /**
+         * donne un etat d'ouverture et de fermeture
+         */
+        virtual void SetOpen() = 0;
         /**
          * @brief recupere la largeur de la fenetre
          */

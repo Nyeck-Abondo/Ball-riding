@@ -47,6 +47,7 @@ namespace SF {
             m_hInstance,
             this
         );
+        m_IsOpen = true;
 
         delete[] wTitle;
 
@@ -54,6 +55,17 @@ namespace SF {
 
         WindowManager::RegisterWindow(this);
         return true;
+    }
+
+    bool windowWin32::IsOpen() {
+        if (m_IsOpen) {
+            return true;
+        }
+        return false;
+    }
+
+    void windowWin32::SetOpen() {
+        m_IsOpen = false;
     }
 
     void windowWin32::clear(const pixels& color) {
@@ -107,17 +119,54 @@ namespace SF {
         if (!window) return DefWindowProcW(hWnd, uMsg, wParam, lParam);
         
         switch (uMsg) {
-            case WM_CLOSE:
-                DestroyWindow(hWnd);
+            case WM_CLOSE: {
+                Eventmanager::PushEvent(new WindowClosedEvent(window->GetId()));
+                window->SetOpen();
                 return 0;
-            case WM_SIZE:
+            }
+
+            case WM_MOUSEMOVE: {
+                float mx = (float)GET_X_LPARAM(lParam);
+                float my = (float)GET_Y_LPARAM(lParam);
+
+                Eventmanager::PushEvent(new MouseMoveEvent(mx, my, window->GetId()));
+            return 0;
+            }
+                
+
+            case WM_LBUTTONDOWN: {
+                float mx = (float)GET_X_LPARAM(lParam);
+                float my = (float)GET_Y_LPARAM(lParam);
+
+                Eventmanager::PushEvent(new MouseClickEvent(mx, my, MouseButton::leftBtn, window->GetId()));
+                return 0;
+            }
+                
+
+            case WM_RBUTTONDOWN: {
+                float mx = (float)GET_X_LPARAM(lParam);
+                float my = (float)GET_Y_LPARAM(lParam);
+
+                Eventmanager::PushEvent(new MouseClickEvent(mx, my, MouseButton::RightBtn, window->GetId()));
+                return 0;
+            }
+
+            case WM_SIZE: {
+                unsigned int width = LOWORD(lParam);
+                unsigned int height = HIWORD(lParam);
+                window->m_Width = width;
+                window->m_Height = height;
+                Eventmanager::PushEvent(new WindowResizeEvent(width, height, window->GetId()));
                 PostQuitMessage(0);
-                return 0; 
+                return 0;
+            }
+                
             case WM_KEYDOWN: {
                 Keycode key = Keycode::unknow;
-                if (wParam >= 'A' && wParam < 'Z') {
-                    
+                if (wParam >= 'A' && wParam <= 'Z') {
+                    key = (Keycode) ((int)Keycode::A + (wParam - 'A'));
                 }
+                Eventmanager::PushEvent(new KeyPressedEvent(key, window->GetId()));
                 break;
             }
                 
