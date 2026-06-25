@@ -81,6 +81,8 @@ namespace SF {
 
         virtual uint32_t GetId() = 0;
 
+        virtual FrameBuffer& GetFrameBuffer() = 0;
+
     };
     
 } // namespace SF

@@ -146,9 +146,12 @@ namespace SF {
         
         //GETTERS
         float GetPosX() { return posX; }
-        float GetPoxY() { return posY; }
+        float GetPosY() { return posY; }
 
-        static EventType GetEventType() { return EventType::mouseMove; }
+        float GetPosX() const { return posX; }
+        float GetPosY() const { return posY; }
+
+        static EventType GetStaticType() { return EventType::mouseMove; }
     };
 
     class MouseClickEvent : public Event {
@@ -164,7 +167,9 @@ namespace SF {
         
         //GETTERS
         float GetPosX() { return posX; }
-        float GetPoxY() { return posY; }
+        float GetPosY() { return posY; }
+        float GetPosX() const { return posX; }
+        float GetPosY() const { return posY; }
         MouseButton GetButton() { return button; }
 
         static EventType GetStaticType() { return EventType::mouseclick; }
@@ -183,7 +188,9 @@ namespace SF {
         
         //GETTERS
         float GetPosX() { return posX; }
-        float GetPoxY() { return posY; }
+        float GetPosY() { return posY; }
+        float GetPosX() const { return posX; }
+        float GetPosY() const { return posY; }
         MouseButton GetButton() { return button; }
 
         static EventType GetStaticType() { return EventType::mouseRelease; }

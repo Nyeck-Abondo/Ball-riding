@@ -20,6 +20,10 @@ namespace SF {
         Shutdown();
     }
 
+    inline FrameBuffer& windowWin32::GetFrameBuffer() {
+        return m_FrameBuffer;
+    }
+
     bool windowWin32::Initialize() {
         m_wc.cbSize = sizeof(WNDCLASSEX);
         m_wc.hCursor = LoadCursor(nullptr, IDC_ARROW),
@@ -156,8 +160,8 @@ namespace SF {
                 unsigned int height = HIWORD(lParam);
                 window->m_Width = width;
                 window->m_Height = height;
+                window->m_FrameBuffer.SetFrameDimension(width, height);
                 Eventmanager::PushEvent(new WindowResizeEvent(width, height, window->GetId()));
-                PostQuitMessage(0);
                 return 0;
             }
                 

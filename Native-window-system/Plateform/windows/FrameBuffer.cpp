@@ -20,6 +20,19 @@ namespace SF  {
         delete[] m_frontBuffer;
     }
 
+    void FrameBuffer::SetFrameDimension(uint32_t newWidth, uint32_t newHeight) {
+        if (m_frontBuffer != nullptr) delete[] m_frontBuffer;
+        if (m_backBuffer != nullptr) delete[] m_backBuffer;
+
+        m_width = newWidth;
+        m_height = newHeight;
+        m_frontBuffer = new pixels[m_width * m_height];
+        m_backBuffer = new pixels[m_width * m_height];
+
+        m_BitmapInfo.bmiHeader.biWidth = m_width;
+        m_BitmapInfo.bmiHeader.biHeight = -(int)m_height;
+    }
+
     void FrameBuffer::ClearBuffer(pixels color) {
         for (int i = 0; i < m_width * m_height; i++) {
             m_backBuffer[i] = color;

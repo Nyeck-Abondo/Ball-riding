@@ -35,6 +35,10 @@ namespace SF {
         uint32_t GetBufferWidth() { return m_width; }
         uint32_t GetBufferHeight() { return m_height; }
 
+        //SETTERS
+        void SetFrameDimension(uint32_t newWidth, uint32_t newHeight);
+        void SetBackBuffer(int index, pixels color) { m_backBuffer[index] = color; }
+
         //METHODES
         /**
          * @brief Efface l'ecran avec la couleur passe en param

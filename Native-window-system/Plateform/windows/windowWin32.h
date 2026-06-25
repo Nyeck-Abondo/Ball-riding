@@ -81,6 +81,8 @@ namespace SF {
         uint32_t GetHeight() override;
 
         uint32_t GetId() override;
+
+        FrameBuffer& GetFrameBuffer() override;
     };
     
 } // namespace SF
