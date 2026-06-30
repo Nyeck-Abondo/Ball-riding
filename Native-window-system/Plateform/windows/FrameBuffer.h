@@ -12,7 +12,7 @@ namespace SF {
         uint8_t a;
 
         pixels(): r(0), g(0), b(0), a(255) {}
-        pixels(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) :
+        pixels(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 255U) :
             r(red), g(green), b(blue), a(alpha) {}
     };
 

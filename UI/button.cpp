@@ -9,8 +9,8 @@ namespace SF {
     Button::~Button() { }
 
     bool Button::IsInside(float mouseX, float mouseY) {
-        return ((mouseX == m_X && mouseY == m_y) || (mouseX == m_X && mouseY <= m_y + m_height) ||
-         (mouseX <= m_X + m_width && mouseY == m_y) || (mouseX <= m_X + m_width && mouseY <= m_y + m_height));
+        return (mouseX >= m_X && mouseX <= m_X + m_width &&
+            mouseY >= m_y && mouseY <= m_y + m_height);
     }
 
     void Button::Update(Event& ev) {
@@ -19,43 +19,52 @@ namespace SF {
             if (m_state != buttonState::pressed) {
                 if (IsInside(e->GetPosX(), e->GetPosY())) {
                     m_state = buttonState::hover;
-                } else {
+                }
+                else {
                     m_state = buttonState::none;
                 }
             }
             return;
         }
 
-        //verification de l'etat de pression du bouton
         if (auto* e = ev.GetIf<MouseClickEvent>()) {
-            if (IsInside(e->GetPosX(), e->GetPosY())) {
+            if (e->GetButton() == MouseButton::leftBtn && IsInside(e->GetPosX(), e->GetPosY())) {
                 m_state = buttonState::pressed;
+            }
+            else if (!IsInside(e->GetPosX(), e->GetPosY())) {
+                m_state = buttonState::none;
             }
             return;
         }
 
         if (auto* e = ev.GetIf<MouseReleaseEvent>()) {
-            if (IsInside(e->GetPosX(), e->GetPosY())) {
-                m_state = buttonState::clicked;
+            if (m_state == buttonState::pressed) {
+                if (IsInside(e->GetPosX(), e->GetPosY()) && m_onClick) {
+                    m_onClick();
+                } else {
+                    m_state = IsInside(e->GetPosX(), e->GetPosY()) ? buttonState::hover : buttonState::none;
+                }
             }
         }
     }
 
     void Button::Render(FrameBuffer& buffer, stbtt_fontinfo& font) {
+        pixels color;
         switch (m_state) {
-            case buttonState::none :
-                DrawRoundedRect(m_X, m_y, m_width, m_height, 10, buffer, m_colorNormal);
+            case buttonState::none : 
+                color = m_colorNormal;
                 break;
             case buttonState::hover :
-                DrawRoundedRect(m_X, m_y, m_width, m_height, 10,  buffer, m_colorHover);
+                {color = m_colorHover;}
                 break;
-            case buttonState::clicked :
-                DrawRoundedRect(m_X, m_y, m_width, m_height, 10, buffer, m_colorNormal);
+            case buttonState::realeased :
+                {color = m_colorNormal;}
                 break;
             case buttonState::pressed :
-                DrawRoundedRect(m_X, m_y, m_width, m_height, 10, buffer, m_colorPressed);
+                {color = m_colorPressed;}
                 break;
         }
+        DrawRoundedRect(m_X, m_y, m_width, m_height, m_radius, buffer, color);
 
         //on consid7re 22px par caracteres
         int lenght = static_cast<int>(m_label.size());

@@ -1,6 +1,17 @@
 #include "uiElement.h"
 
 namespace SF {
+
+    inline pixels BlendPixel(pixels src, pixels dst) {
+        uint16_t a  = src.a;
+        uint16_t ia = 255 - a;
+        return pixels(
+            (uint8_t)((src.r * a + dst.r * ia) / 255),
+            (uint8_t)((src.g * a + dst.g * ia) / 255),
+            (uint8_t)((src.b * a + dst.b * ia) / 255),
+            255
+        );
+    }
     
     void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color) {
         pixels* buffer = fb.GetBackBuffer();
@@ -29,7 +40,7 @@ namespace SF {
                 }
 
                 int index = fy * bufW + fx;
-                buffer[index] = color;
+                buffer[index] = BlendPixel(color, buffer[index]);
             }
         }
     }
@@ -38,9 +49,9 @@ namespace SF {
      * @brief permet de charger une image dans le framebuffer
      * @return True si l'operation a reussie et false sinon
      */
-    bool LoadImageFromAssets(Image img, const char* location) {
+    bool LoadImageFromAssets(Image img) {
         int channels;
-        unsigned char* data = stbi_load(location, &img.width, &img.height, &channels, 4);
+        unsigned char* data = stbi_load(img.location, &img.width, &img.height, &channels, 4);
         if(!data) return false;
 
         img.pixel = new pixels[img.width * img.height];
@@ -102,7 +113,7 @@ namespace SF {
                     pixels src = color;
                     src.a = (uint8_t)((color.a * coverage) / 255);
                     int index = fy * fb.GetBufferWidth() + fx;
-                    buffer[index] = color;
+                    buffer[index] = BlendPixel(color, buffer[index]);
                 }
             }
         cursorX += (int)(advW * scale);

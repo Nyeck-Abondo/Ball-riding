@@ -7,7 +7,7 @@
 namespace SF {
 
     enum class buttonState {
-        none = 0, hover, clicked, pressed
+        none = 0, hover, clicked, pressed, realeased
     };
     
     class Button : public UiElement{

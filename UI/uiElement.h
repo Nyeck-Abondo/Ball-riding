@@ -26,6 +26,13 @@ namespace SF {
         pixels* pixel = nullptr;
         int width = 0;
         int height = 0;
+        int x = 0;
+        int y = 0;
+        const char* location;
+
+        //constructeur
+        Image() {}
+        Image(const char* locate, int mx, int my) : location(locate), x(mx), y(my) {}
 
         void FreeImage() {
             delete[] pixel;
@@ -37,10 +44,14 @@ namespace SF {
     void DrawRect(int x, int y, int width, int height);
 
     /**
+     * @brief alpha compositing de pixel
+     */
+    inline pixels BlendPixel(pixels src, pixels dst);
+    /**
      * @brief permet de charger une image dans le framebuffer
      * @return True si l'operation a reussie et false sinon
      */
-    bool LoadImageFromAssets(Image img, const char* location);
+    bool LoadImageFromAssets(Image img);
 
     /**
      * @brief Charge une police d'écriture en mémoire
