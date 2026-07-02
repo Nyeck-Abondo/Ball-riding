@@ -1,8 +1,9 @@
 #include "../../Native-window-system/Plateform/window.h"
 #include "../../Native-window-system/sleep/sleep.h"
-#include "../../UI/button.h"
-#include "../../UI/notification.h"
-#include <iostream>
+#include "../../UI/boutons/button.h"
+#include "../../UI/notification/notification.h"
+#include "../../2D/shapes/ball.h"
+#include <chrono>
 
 int main() {
     SF::Window* win32 = SF::Window::Create("Ball-riding", 1200, 600);
@@ -21,11 +22,14 @@ int main() {
         win32->GetWidth() / 2 - 100, win32->GetHeight() / 2 - 50, 250, 100, 20,
         SF::pixels(97, 56, 150, 200), SF::pixels(132, 76, 204, 200), 
         SF::pixels(112, 65, 173, 255),
-        [] () {
-        std::cout << "Login confirmed" << std::endl;
+        [&notif] () {
+            notif.Animation();
+            std::cout << "Login confirmed" << std::endl;
     });
 
-    
+    SF::Vector2D vect(12, 100), vect2(1000, 70);
+
+    SF::Ball ball(SF::Vector2D(500, 200), 50, 70);
 
 
     stbtt_fontinfo font;
@@ -35,7 +39,14 @@ int main() {
     bool run = true;
     bool change = false;
 
+    auto lastUpdateTime = std::chrono::high_resolution_clock::now();
+
     while (run) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> elapsedTime = currentTime - lastUpdateTime;
+        lastUpdateTime = currentTime;
+        float deltaTime = elapsedTime.count();
+        
         while (auto event = SF::Eventmanager::PollEvent()){
             
             if (event->GetId() == win32->GetId()) {
@@ -56,6 +67,12 @@ int main() {
                     if (key->GetKeyCode() == SF::Keycode::B) {
                         change = false;
                     }
+                    if (key->GetKeyCode() == SF::Keycode::A) {
+                        ball.SetCenterXPosition(-1.2535f);
+                    }
+                    if (key->GetKeyCode() == SF::Keycode::D) {
+                        ball.SetCenterXPosition(1.2535f);
+                    }
                 }
             }
             if (const auto* ev = event->GetIf<SF::WindowClosedEvent>()) {
@@ -70,6 +87,8 @@ int main() {
                 start.Render(win32->GetFrameBuffer(), font);
             }
             notif.Render(win32->GetFrameBuffer(), font);
+            ball.Render(win32->GetFrameBuffer());
+            ball.Update(9.8f, deltaTime);
             win32->Present();
         }
         else {
