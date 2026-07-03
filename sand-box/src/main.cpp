@@ -29,7 +29,7 @@ int main() {
 
     SF::Vector2D vect(12, 100), vect2(1000, 70);
 
-    SF::Ball ball(SF::Vector2D(500, 200), 50, 70);
+    SF::Ball ball(SF::Vector2D(500, 200), 50, 8, 20);
 
 
     stbtt_fontinfo font;
@@ -87,8 +87,8 @@ int main() {
                 start.Render(win32->GetFrameBuffer(), font);
             }
             notif.Render(win32->GetFrameBuffer(), font);
-            ball.Render(win32->GetFrameBuffer());
-            ball.Update(9.8f, deltaTime);
+            ball.Update(900.0f, deltaTime, 19);
+            ball.Render(win32->GetFrameBuffer(), SF::pixels(34, 145, 47, 200));
             win32->Present();
         }
         else {
