@@ -55,7 +55,7 @@ namespace SF {
             m_y /= n;
         }
 
-        Vector2D Perpendicular() const { return Vector2D(m_y, -m_x); }
+        Vector2D Perpendicular() { return Vector2D(-1.0f *m_y, m_x); }
         
         Vector2D WithMagnitude(float mag) const {
             Vector2D v(m_x, m_y);
@@ -73,6 +73,7 @@ namespace SF {
         int mass;
         float averageDisplacement;
 
+        Node(){}
         Node (Vector2D vect, pixels mColor = pixels(255, 255, 255, 0), int weight = 3) 
             : oldPos(vect), color(mColor), mass(weight), mainPos(vect),
             displacement(0, 0), averageDisplacement(0.0f) {}

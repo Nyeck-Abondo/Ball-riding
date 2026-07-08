@@ -49,19 +49,43 @@ namespace SF {
      * @brief permet de charger une image dans le framebuffer
      * @return True si l'operation a reussie et false sinon
      */
-    bool LoadImageFromAssets(Image img) {
+    bool LoadImageFromAssets(Image& img) {
         int channels;
         unsigned char* data = stbi_load(img.location, &img.width, &img.height, &channels, 4);
-        if(!data) return false;
+        if(!data) {
+            std::cout << "Echec duc chargement !!!!" << std::endl;
+            return false;
+        }
 
         img.pixel = new pixels[img.width * img.height];
         
-        for (int i = 0; i <= img.width * img.height; i++) {
-            img.pixel[i] = pixels(data[i], data[i + 1], data[i + 2], data[i + 3]);
+        for (int i = 0; i < img.width * img.height; i++) {
+            img.pixel[i] = pixels(data[i * 4 + 0], data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]);
         }
         stbi_image_free(data);
+        std::cout << "Cargement reussi !!!" << std::endl;
         return true;
     }
+
+    void DrawImage(Image& img, Vector2D pos, FrameBuffer& fb) {
+    pixels* buffer = fb.GetBackBuffer();
+    int fbWidth  = (int)fb.GetBufferWidth();
+    int fbHeight = (int)fb.GetBufferHeight();
+
+    for (int y = 0; y < img.height; y++) {
+        int fy = (int)pos.m_y + y;
+        if (fy < 0 || fy >= fbHeight) continue;
+
+        for (int x = 0; x < img.width; x++) {
+            int fx = (int)pos.m_x + x;
+            if (fx < 0 || fx >= fbWidth) continue;
+
+            pixels src = img.pixel[y * img.width + x];   // index dans le repère de l'image
+            int dstIndex = fy * fbWidth + fx;             // index dans le repère du framebuffer
+            buffer[dstIndex] = BlendPixel(src, buffer[dstIndex]);
+        }
+    }
+}
 
     /**
      * @brief Charge une police d'écriture en mémoire

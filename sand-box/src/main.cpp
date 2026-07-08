@@ -29,8 +29,11 @@ int main() {
 
     SF::Vector2D vect(12, 100), vect2(1000, 70);
 
-    SF::Ball ball(SF::Vector2D(500, 200), 50, 8, 20);
+    SF::Ball ball(SF::Vector2D(500, 200), 50, 8, 30);
+    SF::Ball head(SF::Vector2D(500, 200), 36, 8, 30);
 
+    SF::Image picture("C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/002-actif-1.png", 500, 100);
+    SF::LoadImageFromAssets(picture);
 
     stbtt_fontinfo font;
     bool fontOK = SF::LoadFont(font, "C:/Windows/Fonts/segoeui.ttf");
@@ -62,18 +65,6 @@ int main() {
                 if (const auto* ev = event->GetIf<SF::MouseClickEvent>()) {
                     std::cout << "clixk a : " << ev->GetPosX() << "; " << ev->GetPosY() << std::endl;
                 }
-
-                if (const auto* key = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (key->GetKeyCode() == SF::Keycode::B) {
-                        change = false;
-                    }
-                    if (key->GetKeyCode() == SF::Keycode::A) {
-                        ball.SetCenterXPosition(-1.2535f);
-                    }
-                    if (key->GetKeyCode() == SF::Keycode::D) {
-                        ball.SetCenterXPosition(1.2535f);
-                    }
-                }
             }
             if (const auto* ev = event->GetIf<SF::WindowClosedEvent>()) {
                 run = false;
@@ -87,8 +78,12 @@ int main() {
                 start.Render(win32->GetFrameBuffer(), font);
             }
             notif.Render(win32->GetFrameBuffer(), font);
-            ball.Update(900.0f, deltaTime, 19);
+            SF::DrawImage(picture, SF::Vector2D(picture.x, picture.y), win32->GetFrameBuffer());
+            ball.Update(900.0f, deltaTime, 395);
+            head.Update(900.0f, deltaTime, 250);
+            SF::Vector2D vect(ball.GetBorderPointTowards(head.GetCenter().mainPos));
             ball.Render(win32->GetFrameBuffer(), SF::pixels(34, 145, 47, 200));
+            head.Render(win32->GetFrameBuffer(), SF::pixels(34, 200, 47, 200));
             win32->Present();
         }
         else {
@@ -98,6 +93,7 @@ int main() {
         SF::sleep(17);
     }
 
+    picture.FreeImage();
     delete win32;
     return 0;
 }

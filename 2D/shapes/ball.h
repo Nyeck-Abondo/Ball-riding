@@ -25,8 +25,15 @@ namespace SF {
         Ball(Node position, int radius, int weight, int links);
         ~Ball(){ }
 
-        //SETTERS
-        void SetCenterXPosition(float value) { m_center.mainPos.m_x += value; }
+        //GETTERS
+        Node GetCenter() { return m_center; }
+        int GetRadius() { return m_radius; }
+        std::unique_ptr<Node>& GetPoint(int index) { return m_points[index]; }
+        Vector2D GetBorderPointTowards(Vector2D from) {
+            Vector2D dir = from - m_center.mainPos;
+            dir.Normalise();
+            return m_center.mainPos + dir * static_cast<float>(m_radius);
+        }
 
         //METHODES PUBLIQUES
         void NodeConstraint(Node node, const std::unique_ptr<Node>& other, float dstIdeal);

@@ -8,6 +8,7 @@
 #include "../libs/stb_image.h"
 #include "../Native-window-system/Plateform/windows/FrameBuffer.h"
 #include "../Native-window-system/Event/event.h"
+#include "../2D/render2D/algorithm2D.h"
 
 namespace SF {
     
@@ -40,6 +41,7 @@ namespace SF {
         }
     };
 
+    void DrawImage(Image& img, Vector2D pos, FrameBuffer& fb);
     void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color);
     void DrawRect(int x, int y, int width, int height);
 
@@ -51,7 +53,7 @@ namespace SF {
      * @brief permet de charger une image dans le framebuffer
      * @return True si l'operation a reussie et false sinon
      */
-    bool LoadImageFromAssets(Image img);
+    bool LoadImageFromAssets(Image& img);
 
     /**
      * @brief Charge une police d'écriture en mémoire

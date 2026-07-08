@@ -91,28 +91,35 @@ namespace SF {
 
         float areaError = m_areaIdeal - currentArea;
         float offset     = areaError / circumference;
-        const float maxOffset = 2.0f; // px par itération, à ajuster selon m_radius
-        offset = std::clamp(offset, -maxOffset, maxOffset);
+        //const float maxOffset = 2.0f; // px par itération, à ajuster selon m_radius
+        //offset = std::clamp(offset, -maxOffset, maxOffset);
 
         for (int i = 0; i < n; i++) {
             Node& current = *m_points[i];
-            Vector2D radial = current.mainPos - m_center.mainPos;  // toujours vers l'exterieur
-            current.AccumulateDisplacement(radial.WithMagnitude(offset));
+            Node& previus = *m_points[i == 0 ? n - 1 : i - 1];
+            Node& next = *m_points[(i + 1) % n];
+
+            Vector2D secant = (previus.mainPos - next.mainPos).Perpendicular();
+            Vector2D normal = secant.WithMagnitude(offset);
+            current.AccumulateDisplacement(normal);
         }
     }
 
     void Ball::ApplyDistanceConstraint() {
-        
+
         int n = static_cast<int>(m_points.size());
         for (int i = 0; i < n; i++) {
             Node& current = *m_points[i];
-            Node& next = *m_points[(i + 1) % n];
+            //Node& previus = *m_points[i == 0 ? n - 1 : i - 1];
+            Node& next = *m_points[i == 0 ? n - 1 : i - 1];
 
+            //Vector2D secant = (next.mainPos - previus.mainPos).Perpendicular();
             Vector2D diff = next.mainPos - current.mainPos;
+
             float dist = diff.Norme();
 
-            if (dist > m_chordLenght && dist > 1e-5f) {
-                float disterr = (dist - m_chordLenght) / 2;
+            if (dist > m_chordLenght) {
+                float disterr = (dist - m_chordLenght) / 2.0f;
                 Vector2D move = diff.WithMagnitude(disterr);
 
                 current.AccumulateDisplacement(move);
@@ -161,7 +168,7 @@ namespace SF {
         for (int iter = 0; iter < iteration; iter++) {
             ApplyDistanceConstraint();
             ApplyDilatationConstraint();
-            ApplyCenterConstraint();
+            //ApplyCenterConstraint();
 
             for (auto& point : m_points) point->ApplyDisplacement();
             m_center.ApplyDisplacement();
