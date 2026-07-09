@@ -63,25 +63,92 @@ namespace SF {
             img.pixel[i] = pixels(data[i * 4 + 0], data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]);
         }
         stbi_image_free(data);
+
+        if (img.wantedHeight <= 0) img.wantedHeight = img.height;
+        if(img.wantedWidth <= 0) img.wantedWidth = img.width;
+
         std::cout << "Cargement reussi !!!" << std::endl;
         return true;
     }
 
-    void DrawImage(Image& img, Vector2D pos, FrameBuffer& fb) {
+
+    /**
+     * @brief Dessine une image presente a une position spécifique.
+     * idéale pour les sprites d'images
+     * @param img la structure contenant les informations de l'image
+     * @param pos la position à laquelle on voudrait dessiner l'image
+     * @param fb le frame buffer dans lequel on va passer les pixels de
+     * l'image à dessiner
+     */
+    void DrawImageAt(Image& img, Vector2D pos, int sizeX, int sizeY, FrameBuffer& fb) {
+        if (!img.pixel) return;
+        pixels* buffer = fb.GetBackBuffer();
+        
+        //calcul du ration de l'image
+        float scaleX = (float)sizeX / (float)img.wantedWidth;
+        float scaleY = (float)sizeY / (float)img.wantedHeight;
+
+        for (int y = 0; y < img.wantedHeight; y++) {
+            int fy = (int)img.pos.m_y + y;
+            if (fy < 0 || fy >= fb.GetBufferHeight()) continue;
+
+            int localY = static_cast<int>(y * scaleY);
+            if(localY >= sizeY) localY = sizeY - 1;
+
+            int pxY = (int)pos.m_y + localY;
+            if (pxY >= img.height) pxY = img.height - 1;
+
+            for (int x = 0; x < img.wantedWidth; x++) {
+                int fx = (int)img.pos.m_x + x;
+                if (fx < 0 || fx >= fb.GetBufferWidth()) continue;
+
+                int localX = static_cast<int>(x * scaleX);
+                if(localX >= sizeX) localX = sizeX - 1;
+
+                int pxX = (int)pos.m_x + localX;
+                if (pxX >= img.width) pxX = img.width - 1;
+
+                pixels src = img.pixel[pxY * img.width + pxX];
+                int dstIndex = fy * fb.GetBufferWidth() + fx;
+                buffer[dstIndex] = BlendPixel(src, buffer[dstIndex]);
+            }
+        }
+
+    }
+
+    /**
+     * @brief Dessine une image à une position spécifique
+     * @param img la structure contenant les informations de l'image
+     * @param pos la position à laquelle on voudrait dessiner l'image
+     * @param fb le frame buffer dans lequel on va passer les pixels de
+     * l'image à dessiner
+     */
+    void DrawImage(Image& img, FrameBuffer& fb) {
     pixels* buffer = fb.GetBackBuffer();
     int fbWidth  = (int)fb.GetBufferWidth();
     int fbHeight = (int)fb.GetBufferHeight();
+    
+    //calcul du ration de l'affichage
+    float scaleX = (float)img.width / (float)img.wantedWidth;
+    float scaleY = (float)img.height / (float)img.wantedHeight;
 
-    for (int y = 0; y < img.height; y++) {
-        int fy = (int)pos.m_y + y;
+    for (int y = 0; y < img.wantedHeight; y++) {
+        int fy = (int)img.pos.m_y + y;
         if (fy < 0 || fy >= fbHeight) continue;
 
-        for (int x = 0; x < img.width; x++) {
-            int fx = (int)pos.m_x + x;
+        int pxY = static_cast<int>(y * scaleY);
+        //clamp pour le pixel de fin d'image
+        if(pxY >= img.height) pxY = img.height - 1;
+
+        for (int x = 0; x < img.wantedWidth; x++) {
+            int fx = (int)img.pos.m_x + x;
             if (fx < 0 || fx >= fbWidth) continue;
 
-            pixels src = img.pixel[y * img.width + x];   // index dans le repère de l'image
-            int dstIndex = fy * fbWidth + fx;             // index dans le repère du framebuffer
+            int pxX = static_cast<int>(x * scaleX);
+            if (pxX >= img.width) pxX = img.width - 1;
+
+            pixels src = img.pixel[pxY * img.width + pxX];
+            int dstIndex = fy * fbWidth + fx;
             buffer[dstIndex] = BlendPixel(src, buffer[dstIndex]);
         }
     }
@@ -89,6 +156,10 @@ namespace SF {
 
     /**
      * @brief Charge une police d'écriture en mémoire
+     * @param font la structure stockant les informations de la police
+     * à utiliser
+     * @param location le chemin d'accès vers la police que l'on souhaite
+     * utiliser
      * @return true si l'opération est un succès, false sinon
      */
     bool LoadFont(stbtt_fontinfo& font, const char* location) {

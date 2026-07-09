@@ -9,8 +9,10 @@ int main() {
     SF::Window* win32 = SF::Window::Create("Ball-riding", 1200, 600);
     win32->Initialize();
 
-    SF::Notification notif("Bienvenue Player", 
-        win32->GetWidth() / 2 - 300, 450, 600, 70,  
+    SF::Notification notif(
+        "Bienvenue Player !! Lancez une nouvelle partie", 
+        win32->GetWidth() / 2 - 300,
+        450, 600, 70, 20,  
         SF::Image("C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/002-actif-1.png", 500, 75),
         SF::NotificationType::standardNotificationDown,
         SF::pixels(13, 9, 20),
@@ -18,8 +20,9 @@ int main() {
     );
 
     SF::Button start(
-        "START", 
-        win32->GetWidth() / 2 - 100, win32->GetHeight() / 2 - 50, 250, 100, 20,
+        "START NEW GAME", 
+        win32->GetWidth() / 2 - 100, win32->GetHeight() / 2 - 50,
+         250, 100, 20, 19,
         SF::pixels(97, 56, 150, 200), SF::pixels(132, 76, 204, 200), 
         SF::pixels(112, 65, 173, 255),
         [&notif] () {
@@ -32,12 +35,23 @@ int main() {
     SF::Ball ball(SF::Vector2D(500, 200), 50, 8, 30);
     SF::Ball head(SF::Vector2D(500, 200), 36, 8, 30);
 
-    SF::Image picture("C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/002-actif-1.png", 500, 100);
+    SF::Image picture(
+        "C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/Aquatic_level_with_water_background_202607082307.jpeg",
+        SF::Vector2D(0, 0),
+        1550, 800
+    );
+
+    SF::Image icon(
+        "C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/icons/iconsDouble.png",
+        SF::Vector2D(500, 500),
+        0, 0
+    );
+
+    SF::LoadImageFromAssets(icon);
     SF::LoadImageFromAssets(picture);
 
     stbtt_fontinfo font;
     bool fontOK = SF::LoadFont(font, "C:/Windows/Fonts/segoeui.ttf");
-
 
     bool run = true;
     bool change = false;
@@ -73,15 +87,16 @@ int main() {
 
         notif.Animation();
         if (!change) {
-            win32->clear(SF::pixels(23, 17, 36, 255));
-            if (fontOK) {
-                start.Render(win32->GetFrameBuffer(), font);
-            }
+            win32->clear(SF::pixels(43, 43, 43, 255));
+            //if (fontOK) {
+              //  start.Render(win32->GetFrameBuffer(), font);
+            //}
             notif.Render(win32->GetFrameBuffer(), font);
-            SF::DrawImage(picture, SF::Vector2D(picture.x, picture.y), win32->GetFrameBuffer());
+            SF::DrawImage(picture, win32->GetFrameBuffer());
+            SF::DrawImageAt(icon, SF::Vector2D(0, 128), 0, 0, win32->GetFrameBuffer());
             ball.Update(900.0f, deltaTime, 395);
             head.Update(900.0f, deltaTime, 250);
-            SF::Vector2D vect(ball.GetBorderPointTowards(head.GetCenter().mainPos));
+            //SF::Vector2D vect(ball.GetBorderPointTowards(head.GetCenter().mainPos));
             ball.Render(win32->GetFrameBuffer(), SF::pixels(34, 145, 47, 200));
             head.Render(win32->GetFrameBuffer(), SF::pixels(34, 200, 47, 200));
             win32->Present();

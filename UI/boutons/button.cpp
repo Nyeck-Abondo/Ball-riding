@@ -2,9 +2,9 @@
 
 namespace SF {
     
-    Button::Button(const std::string label, int x, int y, int width, int height, int radius, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick)
+    Button::Button(const std::string label, int x, int y, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick)
     : m_label(label), m_X(x), m_y(y), m_width(width), m_height(height), m_radius(radius), m_colorNormal(colorNormal), m_colorPressed(colorPressed),
-    m_colorHover(colorHover), m_onClick(onClick), m_state(buttonState::none) { }
+    m_colorHover(colorHover), m_onClick(onClick), m_state(buttonState::none), m_fontSize(fontSize) { }
 
     Button::~Button() { }
 
@@ -73,10 +73,11 @@ namespace SF {
 
         //on consid7re 22px par caracteres
         int lenght = static_cast<int>(m_label.size());
-        int labelX = m_X + (m_width - lenght * 22) - 15;
+        std::cout << lenght << std::endl;
+        int labelX = m_X + (m_width - lenght * (m_fontSize - 1) / 2) / 2;
         int labelY = m_y + m_height / 2 - 10;
 
-        DrawText(font, m_label.c_str(), labelX, labelY, 21, pixels(255, 255, 255, 255), buffer);
+        DrawText(font, m_label.c_str(), labelX, labelY, m_fontSize, pixels(255, 255, 255, 255), buffer);
     }
 
 } // namespace SF

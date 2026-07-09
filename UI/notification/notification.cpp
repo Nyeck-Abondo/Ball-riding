@@ -2,11 +2,11 @@
 
 namespace SF {
     
-    Notification::Notification(std::string text, int x, int y, int width, int height, Image icon, NotificationType type,
+    Notification::Notification(std::string text, int x, int y, int width, int height, int fontSize, Image icon, NotificationType type,
         pixels bgColor, pixels sidebarColor)
         : m_notifText(text), m_x(x), m_y(y), m_width(width), m_height(height),
         m_mainBgColor(bgColor), m_sidebarColor(sidebarColor), m_notifType(type),
-        m_notifIcon(icon) {
+        m_notifIcon(icon), m_fontSize(fontSize) {
             m_fadeInTime = 1500.0f;
             m_showed = false;
             if (m_notifType == NotificationType::standardNotification || m_notifType == NotificationType::rewardNotification) {
@@ -64,8 +64,8 @@ namespace SF {
         DrawRoundedRect(m_x + 15, m_currentY + 7, 10, m_height - 20, 3, buffer, m_sidebarColor);
 
         int lenght = static_cast<int>(m_notifText.size());
-        int labelX = m_x + (m_width - lenght * 30) - 15;
+        int labelX = m_x + std::abs(m_width - lenght * (m_fontSize - 1) / 2) / 2;
         int labelY = m_currentY + m_height / 2 - 19;
-        DrawText(font, m_notifText.c_str(), labelX, labelY, 30, pixels(255, 255, 255), buffer);
+        DrawText(font, m_notifText.c_str(), labelX, labelY, m_fontSize, pixels(255, 255, 255), buffer);
     }
 } // namespace SF

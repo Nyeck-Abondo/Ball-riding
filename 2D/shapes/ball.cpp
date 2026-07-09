@@ -23,24 +23,6 @@ namespace SF {
             std::cout << "points: " << m_points.size() << std::endl;
     }
 
-    void Ball::NodeConstraint(Node node, const std::unique_ptr<Node>& other, float dstIdeal) {
-        float currentDistance = node.mainPos.Distance(other->mainPos);
-        if (currentDistance < 0.001f) currentDistance = 0.001f;
-        
-        float diff = (currentDistance - dstIdeal) / currentDistance;
-        
-        Vector2D move = other->mainPos - node.mainPos;
-
-        float correctionX = move.m_x * 0.5f * diff;
-        float correctionY = move.m_y * 0.5f * diff;
-
-        node.mainPos.m_x += correctionX;
-        node.mainPos.m_y += correctionY;
-
-        other->mainPos.m_x -= correctionX;
-        other->mainPos.m_y -= correctionY;
-    }
-
     void Ball::VerletIntegretion(float gravity, float deltaTime) {
         for (auto& node : m_points) {
             Vector2D copy (node->mainPos);
@@ -58,9 +40,9 @@ namespace SF {
                 node->mainPos.m_x = 20;
             }
 
-            if (node->mainPos.m_y >= 500.0f) {
-                node->mainPos.m_y = 500.0f;
-                node->oldPos.m_y = 500.0f; // annule la vitesse verticale au contact du sol
+            if (node->mainPos.m_y >= 600.0f) {
+                node->mainPos.m_y = 600.0f;
+                node->oldPos.m_y = 600.0f; // annule la vitesse verticale au contact du sol
             }
 
             node->oldPos = copy;
@@ -71,9 +53,9 @@ namespace SF {
         m_center.mainPos.m_x = 2 * m_center.mainPos.m_x - m_center.oldPos.m_x + 0 * deltaTime * deltaTime;
         m_center.mainPos.m_y = 2 * m_center.mainPos.m_y - m_center.oldPos.m_y + gravity * deltaTime * deltaTime;
 
-        if (m_center.mainPos.m_y >= 500.0f) {
-            m_center.mainPos.m_y = 500.0f;
-            m_center.oldPos.m_y = 500.0f;
+        if (m_center.mainPos.m_y >= 600.0f) {
+            m_center.mainPos.m_y = 600.0f;
+            m_center.oldPos.m_y = 600.0f;
         }
 
         if (m_center.mainPos.m_x > 1200.0f) {
@@ -128,20 +110,6 @@ namespace SF {
         }
     }
 
-    void Ball::ApplyCenterConstraint() {
-        for (auto& point : m_points) {
-            Vector2D diff = point->mainPos - m_center.mainPos;
-            float dist = diff.Norme();
-            if (dist < 1e-5f) continue;
-
-            float error = dist - m_dstCenter;
-            Vector2D correction = diff.WithMagnitude(error * 0.5f); // répartition 50/50
-
-            point->AccumulateDisplacement(correction * -1.0f); // rapproche le point du centre
-            m_center.AccumulateDisplacement(correction);        // rapproche le centre du point
-        }
-    }
-
     float Ball::BallArea() {
         float Area = 0.0f;
         int n = static_cast<int>(m_points.size());
@@ -157,7 +125,7 @@ namespace SF {
     void Ball::Update(float gravity, float deltaTime, int iteration) {
         float dst = m_points[0]->oldPos.Distance(m_points[1]->oldPos) + 5.0f;
         float dstcenter = m_center.oldPos.Distance(m_points[0]->oldPos);
-        float floor = 600.0f;
+        float floor = 700.0f;
 
         float CurrentArea = BallArea();
         std::cout << "Aire : " << CurrentArea << std::endl;

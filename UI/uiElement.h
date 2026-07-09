@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <string>
+#include <iostream>
+#include <cmath>
 
 #include "../libs/stb_truetype.h"
 
@@ -27,13 +29,15 @@ namespace SF {
         pixels* pixel = nullptr;
         int width = 0;
         int height = 0;
-        int x = 0;
-        int y = 0;
+        int wantedWidth = 0;
+        int wantedHeight = 0;
+        Vector2D pos;
         const char* location;
 
         //constructeur
         Image() {}
-        Image(const char* locate, int mx, int my) : location(locate), x(mx), y(my) {}
+        Image(const char* locate, Vector2D position, int wWidth = 0, int wHeight = 0) 
+        : location(locate), pos(position), wantedHeight(wHeight), wantedWidth(wWidth) {}
 
         void FreeImage() {
             delete[] pixel;
@@ -41,7 +45,8 @@ namespace SF {
         }
     };
 
-    void DrawImage(Image& img, Vector2D pos, FrameBuffer& fb);
+    void DrawImage(Image& img, FrameBuffer& fb);
+    void DrawImageAt(Image& img, Vector2D pos,  int sizeX, int sizeY, FrameBuffer& fb);
     void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color);
     void DrawRect(int x, int y, int width, int height);
 

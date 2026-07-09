@@ -16,6 +16,7 @@ namespace SF {
         private:
             buttonState m_state;
             int m_X, m_y, m_width, m_height, m_radius;
+            int m_fontSize;
             std::string m_label;
             pixels m_colorNormal, m_colorHover, m_colorPressed;
             std::function<void()> m_onClick;
@@ -23,7 +24,8 @@ namespace SF {
         public:
 
         //constructeur
-        Button(const std::string label, int x, int y, int width, int height, int radius, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
+        Button() {}
+        Button(const std::string label, int x, int y, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
         ~Button();
 
         //methodes

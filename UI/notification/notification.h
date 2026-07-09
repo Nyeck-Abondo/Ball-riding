@@ -18,6 +18,7 @@ namespace SF {
         int m_x, m_y;
         float m_currentY;
         int m_width, m_height;
+        int m_fontSize;
         float m_fadeInTime;
         
         std::string m_notifText;
@@ -29,7 +30,7 @@ namespace SF {
     public:
         //constructeurs / destructeurs
         Notification() {}
-        Notification(std::string text, int x, int y, int width, int height, Image icon, NotificationType type = NotificationType::standardNotification,
+        Notification(std::string text, int x, int y, int width, int height, int fontSize, Image icon, NotificationType type = NotificationType::standardNotification,
             pixels bgColor = pixels(37, 32, 48), pixels sidebarColor = pixels(119, 60, 163));
         ~Notification(){}
 
