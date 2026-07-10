@@ -48,12 +48,8 @@ namespace SF {
     void DrawImage(Image& img, FrameBuffer& fb);
     void DrawImageAt(Image& img, Vector2D pos,  int sizeX, int sizeY, FrameBuffer& fb);
     void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color);
-    void DrawRect(int x, int y, int width, int height);
+    void DrawRectangle(int x, int y, int width, int height, FrameBuffer& fb);
 
-    /**
-     * @brief alpha compositing de pixel
-     */
-    inline pixels BlendPixel(pixels src, pixels dst);
     /**
      * @brief permet de charger une image dans le framebuffer
      * @return True si l'operation a reussie et false sinon

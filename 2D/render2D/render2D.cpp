@@ -2,6 +2,17 @@
 
 namespace SF {
     
+    pixels BlendPixel(pixels src, pixels dst) {
+        uint16_t a  = src.a;
+        uint16_t ia = 255 - a;
+        return pixels(
+            (uint8_t)((src.r * a + dst.r * ia) / 255),
+            (uint8_t)((src.g * a + dst.g * ia) / 255),
+            (uint8_t)((src.b * a + dst.b * ia) / 255),
+            255
+        );
+    }
+
     void DrawLine(const std::unique_ptr<Node>& node, const std::unique_ptr<Node>& other, FrameBuffer& bf) {
         pixels* buffer = bf.GetBackBuffer();
         int width  = bf.GetBufferWidth();
@@ -41,7 +52,7 @@ namespace SF {
             for (int i = 0; i <= dy; i++) {
                 int index = y * width + x;
                 if (x < 0 || x >= width || y < 0 || y >= height) continue;
-                buffer[index] = pixels(node->color);
+                buffer[index] = BlendPixel(pixels(node->color), buffer[index]);
 
                 if (p >= 0) {
                     x += uintx;
@@ -93,7 +104,7 @@ namespace SF {
 
             for (int i = 0; i <= dy; i++) {
                 int index = y * width + x;
-                buffer[index] = pixels(color);
+                buffer[index] = BlendPixel(pixels(color), buffer[index]);
 
                 if (p >= 0) {
                     x += uintx;

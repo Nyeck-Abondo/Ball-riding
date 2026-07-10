@@ -7,7 +7,7 @@ namespace SF {
         : m_notifText(text), m_x(x), m_y(y), m_width(width), m_height(height),
         m_mainBgColor(bgColor), m_sidebarColor(sidebarColor), m_notifType(type),
         m_notifIcon(icon), m_fontSize(fontSize) {
-            m_fadeInTime = 1500.0f;
+            m_fadeInTime = 500.0f;
             m_showed = false;
             if (m_notifType == NotificationType::standardNotification || m_notifType == NotificationType::rewardNotification) {
                 m_currentY = m_y - 150.0f;

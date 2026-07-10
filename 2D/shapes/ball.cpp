@@ -30,9 +30,9 @@ namespace SF {
             node->mainPos.m_x = 2 * node->mainPos.m_x - node->oldPos.m_x + 0 * deltaTime * deltaTime;
             node->mainPos.m_y = 2 * node->mainPos.m_y - node->oldPos.m_y + gravity * deltaTime * deltaTime;
 
-            if (node->mainPos.m_x > 1200.0f) {
-                node->mainPos.m_x = 1198;
-                node->oldPos.m_x = 1198;
+            if (node->mainPos.m_x > 1750.0f) {
+                node->mainPos.m_x = 1750.0f;
+                node->oldPos.m_x = 1750.0f;
             } 
 
             if (node->mainPos.m_x <= 20.0f) {
@@ -40,9 +40,9 @@ namespace SF {
                 node->mainPos.m_x = 20;
             }
 
-            if (node->mainPos.m_y >= 600.0f) {
-                node->mainPos.m_y = 600.0f;
-                node->oldPos.m_y = 600.0f; // annule la vitesse verticale au contact du sol
+            if (node->mainPos.m_y >= 710.0f) {
+                node->mainPos.m_y = 710.0f;
+                node->oldPos.m_y = 710.0f; // annule la vitesse verticale au contact du sol
             }
 
             node->oldPos = copy;
@@ -64,6 +64,12 @@ namespace SF {
             }
 
         m_center.oldPos = copy;
+    }
+
+    void Ball::ApplyDisplacement(Vector2D direction, int intensity) {
+        for (auto& point : m_points) {
+            point->AccumulateDisplacement(direction.WithMagnitude(intensity));
+        }
     }
 
     void Ball::ApplyDilatationConstraint() {
@@ -192,7 +198,7 @@ namespace SF {
 
                 for (int x = xStart; x <= xEnd; x++) {
                     
-                    buffer[y * width + x] = color;
+                    buffer[y * width + x] = BlendPixel(color, buffer[y * width + x]);
                 }
             }
         }

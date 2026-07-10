@@ -92,6 +92,7 @@ namespace SF {
         }
     };
 
+    pixels BlendPixel(pixels src, pixels dst);
     void DrawLine(const std::unique_ptr<Node>& node, const std::unique_ptr<Node>& other, FrameBuffer& bf);
     void DrawLine(Vector2D& other, Vector2D& vect, pixels color, FrameBuffer& bf);
     

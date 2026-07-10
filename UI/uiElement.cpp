@@ -1,17 +1,6 @@
 #include "uiElement.h"
 
 namespace SF {
-
-    inline pixels BlendPixel(pixels src, pixels dst) {
-        uint16_t a  = src.a;
-        uint16_t ia = 255 - a;
-        return pixels(
-            (uint8_t)((src.r * a + dst.r * ia) / 255),
-            (uint8_t)((src.g * a + dst.g * ia) / 255),
-            (uint8_t)((src.b * a + dst.b * ia) / 255),
-            255
-        );
-    }
     
     void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color) {
         pixels* buffer = fb.GetBackBuffer();
@@ -82,6 +71,7 @@ namespace SF {
      */
     void DrawImageAt(Image& img, Vector2D pos, int sizeX, int sizeY, FrameBuffer& fb) {
         if (!img.pixel) return;
+        
         pixels* buffer = fb.GetBackBuffer();
         
         //calcul du ration de l'image

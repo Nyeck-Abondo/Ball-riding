@@ -136,7 +136,13 @@ namespace SF {
                 Eventmanager::PushEvent(new MouseMoveEvent(mx, my, window->GetId()));
             return 0;
             }
-                
+             
+            case WM_LBUTTONUP: {
+                float mx = (float)GET_X_LPARAM(lParam);
+                float my = (float)GET_Y_LPARAM(lParam);
+
+                Eventmanager::PushEvent(new MouseReleaseEvent(mx, my, MouseButton::leftBtn, window->GetId()));
+            }
 
             case WM_LBUTTONDOWN: {
                 float mx = (float)GET_X_LPARAM(lParam);

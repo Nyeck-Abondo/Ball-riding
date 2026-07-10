@@ -29,14 +29,10 @@ namespace SF {
         Node GetCenter() { return m_center; }
         int GetRadius() { return m_radius; }
         std::unique_ptr<Node>& GetPoint(int index) { return m_points[index]; }
-        Vector2D GetBorderPointTowards(Vector2D from) {
-            Vector2D dir = from - m_center.mainPos;
-            dir.Normalise();
-            return m_center.mainPos + dir * static_cast<float>(m_radius);
-        }
+        std::vector<std::unique_ptr<Node>>& GetAllPoints() { return m_points; }
 
         //METHODES PUBLIQUES
-        void NodeConstraint(Node node, const std::unique_ptr<Node>& other, float dstIdeal);
+        void ApplyDisplacement(Vector2D direction, int intesity);
         void ApplyDistanceConstraint();
         void ApplyDilatationConstraint();
         void ApplyCenterConstraint();

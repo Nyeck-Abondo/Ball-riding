@@ -15,7 +15,8 @@ namespace SF {
     class Button : public UiElement{
         private:
             buttonState m_state;
-            int m_X, m_y, m_width, m_height, m_radius;
+            Vector2D m_pos;
+            int m_width, m_height, m_radius;
             int m_fontSize;
             std::string m_label;
             pixels m_colorNormal, m_colorHover, m_colorPressed;
@@ -25,8 +26,13 @@ namespace SF {
 
         //constructeur
         Button() {}
-        Button(const std::string label, int x, int y, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
+        Button(const std::string label, Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
         ~Button();
+
+        //GETTERS
+        Vector2D& GetPosition() { return m_pos; }
+        int GetWidth() { return m_width; }
+        int GetHeight() { return m_height; }
 
         //methodes
 
