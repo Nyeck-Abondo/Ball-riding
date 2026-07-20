@@ -1,0 +1,20 @@
+from Jenga import *
+
+with project("Native-window-system"):
+    staticlib()
+    language("C++")
+    cppdialect("C++17")
+    files([
+        "Event/**.cpp",
+        "Plateform/**.cpp",
+        "Plateform/windows/**.cpp",
+        "sleep/**.cpp",
+        "Window-manager/**.cpp"
+    ])
+    includedirs([
+        "Event",
+        "Plateform",
+        "Plateform/windows",
+        "sleep",
+        "Window-manager"
+    ])

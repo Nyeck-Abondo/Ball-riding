@@ -1,0 +1,22 @@
+{
+    "files.associations": {
+        "*.jenga": "python"
+    },
+    "python.analysis.include": [
+        "***.py",
+        "***.py",
+        "**/*.jenga",
+        "**/*.py"
+    ],
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportWildcardImportFromLibrary": "none",
+        "reportMissingImports": "warning",
+        "reportUndefinedVariable": "warning"
+    },
+    "python.analysis.extraPaths": [
+        "C:/Users/Administrator/Documents/Git_pro/Jenga",
+        ".jenga-typings",
+        "/home/nyeck/github/Jenga"
+    ],
+    "_jengaIdeConfigVersion": "47e371aa5c05e1aa"
+}

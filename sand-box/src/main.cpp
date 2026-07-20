@@ -3,8 +3,10 @@
 #include "../../UI/boutons/button.h"
 #include "../../UI/notification/notification.h"
 #include "../../2D/shapes/ball.h"
+#include "../../2D/shapes/ellipse.h"
 #include "../../2D/shapes/enemies.h"
 #include "../../UI/panel/panel.h"
+#include "../../2D/shapes/Frog/legs.h"
 #include <chrono>
 
 int main() {
@@ -26,87 +28,14 @@ int main() {
         SF::Vector2D(0, 0),
         1550, 800
     );
-
-    SF::Image icon(
-        "C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/icons/iconsDouble.png",
-        SF::Vector2D(75, 20),
-        64, 64
-    );
-
-    SF::Image icon2(
-        "C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/icons/card_subtract.png",
-        SF::Vector2D(150, 850),
-        64, 64
-    );
     
-    SF::LoadImageFromAssets(icon);
-    SF::LoadImageFromAssets(icon2);
     SF::LoadImageFromAssets(picture);
 
-    stbtt_fontinfo notifFont;
-    SF::LoadFont(notifFont, "C:/Users/Administrator/Documents/Github/Ball-riding/assets/Font/Inter_28pt-Medium.ttf");
+    SF::Ellipse elhead(SF::Node(SF::Vector2D(500, 150)), 45, 30, 20);
 
-    SF::Panel sidePanel(
-        "Menu",
-        SF::Vector2D(0, 0),
-        200, win32->GetHeight(), 2, 600, 70,
-        SF::pixels(31, 31, 31, 200), SF::pixels(255, 255, 255, 200),
-        icon, icon,
-        SF::Vector2D(128, 1152),
-        notifFont
-    );
-
-    sidePanel.AddButton(
-        "resume", SF::Vector2D(0, 150),
-        sidePanel.GetWidth(), 100, 0, 30,
-        SF::pixels(35, 110, 33, 200), SF::pixels(50, 158, 47, 200), 
-        SF::pixels(61, 191, 173, 57), [] () {
-            std::cout << "OK" << std::endl;
-        }
-    );
-
-    sidePanel.AddButton(
-        "resume", SF::Vector2D(0, 250),
-        sidePanel.GetWidth(), 100, 0, 30,
-        SF::pixels(35, 110, 33, 200), SF::pixels(50, 158, 47, 200), 
-        SF::pixels(61, 191, 173, 57), [] () {
-            std::cout << "OK" << std::endl;
-        }
-    );
-
-    sidePanel.AddButton(
-        "resume", SF::Vector2D(0, 350),
-        sidePanel.GetWidth(), 100, 0, 30,
-        SF::pixels(35, 110, 33, 200), SF::pixels(50, 158, 47, 200), 
-        SF::pixels(61, 191, 173, 57), [] () {
-            std::cout << "OK" << std::endl;
-        }
-    );
-
-    sidePanel.AddButton(
-        "resume", SF::Vector2D(0, 450),
-        sidePanel.GetWidth(), 100, 0, 30,
-        SF::pixels(35, 110, 33, 200), SF::pixels(50, 158, 47, 200), 
-        SF::pixels(61, 191, 173, 57), [] () {
-            std::cout << "OK" << std::endl;
-        }
-    );
-
-    SF::Button start(
-        "START NEW GAME",
-        SF::Vector2D(win32->GetWidth() / 2 - 100, win32->GetHeight() / 2 - 50),
-         250, 100, 20, 19,
-        SF::pixels(97, 56, 150, 200), SF::pixels(132, 76, 204, 200), 
-        SF::pixels(112, 65, 173, 255),
-        [&notif] () {
-            notif.Animation();
-            std::cout << "Login confirmed" << std::endl;
-    });
-
-    SF::Ball ball(SF::Vector2D(500, 200), 50, 8, 30);
-    SF::Ball head(SF::Vector2D(500, 200), 36, 8, 30);
-    SF::Ball adv(SF::Ball(SF::Vector2D(500, 200), 50, 8, 30));
-    SF::Enemy redFrog(&adv, 50, 200, 3000);
+    SF::Ball ball(SF::Vector2D(500, 200), 50, 8, 20);
+    SF::Ball head(SF::Vector2D(500, 200), 43, 8, 30);
+    SF::Legs leg(SF::Legs(SF::FootType::Left, ball.GetPoint(15)->mainPos, 1, 1, 30, 30));
 
     stbtt_fontinfo font;
     bool fontOK = SF::LoadFont(font, "C:/Users/Administrator/Documents/Github/Ball-riding/assets/Font/RussoOne-Regular.ttf");
@@ -128,10 +57,6 @@ int main() {
         while (auto event = SF::Eventmanager::PollEvent()){
             
             if (event->GetId() == win32->GetId()) {
-                start.Update(*event);
-                sidePanel.Update(*event);
-                //sidePanel.Update(*event);
-
 
                 if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
                     if (ev->GetKeyCode() == SF::Keycode::C) {
@@ -160,30 +85,53 @@ int main() {
                         ball.ApplyDisplacement(forward * -1, 10);
                     }
                 }
+
+                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == SF::Keycode::Up) {
+                        head.ApplyDisplacement(jump, 170);
+                    }
+                }
+
+                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == SF::Keycode::Right) {
+                        head.ApplyDisplacement(forward, 10);
+                    }
+                }
+
+                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == SF::Keycode::Left) {
+                        head.ApplyDisplacement(forward * -1, 10);
+                    }
+                }
             }
             if (const auto* ev = event->GetIf<SF::WindowClosedEvent>()) {
                 run = false;
             }
         }
 
-        notif.Animation();
         if (!change) {
-            win32->clear(SF::pixels(43, 43, 43, 255));
-            if (fontOK) {
-                start.Render(win32->GetFrameBuffer(), font);
-            }
             SF::DrawImage(picture, win32->GetFrameBuffer());
-            //SF::DrawImageAt(icon, SF::Vector2D(0, 128), 0, 0, win32->GetFrameBuffer());
-            notif.Render(win32->GetFrameBuffer(), font);
+            
+            //head.SetPointfixedPosition(SF::Vector2D(ball.GetCenter().mainPos.m_x + 5, ball.GetCenter().mainPos.m_y + ball.GetRadius() + 40.0f), 0);
+            //head.SetPointfixedPosition(SF::Vector2D(ball.GetCenter().mainPos.m_x + 30, ball.GetCenter().mainPos.m_y + ball.GetRadius() + 30.0f), 20);
             ball.Update(900.0f, deltaTime, 395);
-            head.Update(900.0f, deltaTime, 250);
-            redFrog.Update(ball, deltaTime);
-            ball.Render(win32->GetFrameBuffer(), SF::pixels(34, 145, 47, 200));
-            head.Render(win32->GetFrameBuffer(), SF::pixels(34, 200, 47, 200));
-            redFrog.Render(win32->GetFrameBuffer(), SF::pixels(143, 26, 52, 200));
-            sidePanel.Animate();
-            sidePanel.Render(win32->GetFrameBuffer(), font);
-            SF::DrawImage(icon2, win32->GetFrameBuffer());
+
+             head.Update(
+                 900.0f, 
+                 deltaTime, 
+                 1100, 
+                 SF::Vector2D(ball.GetCenter().mainPos.m_x - 35.0f, ball.GetCenter().mainPos.m_y + ball.GetRadius() - 70.0f), 
+                 SF::Vector2D(ball.GetCenter().mainPos.m_x + 60, ball.GetCenter().mainPos.m_y + ball.GetRadius() - 80.0f),
+                 0, 14
+             );
+
+
+            leg.Update(900.0f, deltaTime, ball.GetCenter().mainPos + 12);
+
+            ball.Render(win32->GetFrameBuffer(), SF::pixels(13, 117, 74, 255));
+            head.Render(win32->GetFrameBuffer(), SF::pixels(13, 117, 74, 255));
+            //elhead.Render(win32->GetFrameBuffer(), SF::pixels(34, 145, 47, 240));
+            leg.Render(win32->GetFrameBuffer(), SF::pixels(120, 9, 11));
 
             win32->Present();
         }
@@ -195,7 +143,6 @@ int main() {
     }
 
     picture.FreeImage();
-    icon.FreeImage();
     delete win32;
     return 0;
 }

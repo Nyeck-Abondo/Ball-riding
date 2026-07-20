@@ -172,14 +172,40 @@ namespace SF {
             }
                 
             case WM_KEYDOWN: {
-                Keycode key = Keycode::unknow;
-                if (wParam >= 'A' && wParam <= 'Z') {
-                    key = (Keycode) ((int)Keycode::A + (wParam - 'A'));
+                switch (wParam) {
+                    case VK_UP: {
+                        Keycode Key = Keycode::Up;
+                        Eventmanager::PushEvent(new KeyPressedEvent(Key, window->GetId()));
+                    }   
+                    break;
+                    
+                    case VK_RIGHT: {
+                        Keycode Key = Keycode::Right;
+                        Eventmanager::PushEvent(new KeyPressedEvent(Key, window->GetId()));
+                    }   
+                    break;
+
+                    case VK_LEFT: {
+                        Keycode Key = Keycode::Left;
+                        Eventmanager::PushEvent(new KeyPressedEvent(Key, window->GetId()));
+                    }   
+                    break;
+
+                    case VK_DOWN: {
+                        Keycode Key = Keycode::Down;
+                        Eventmanager::PushEvent(new KeyPressedEvent(Key, window->GetId()));
+                    }   
+                    break;
+
+                    default:
+                        Keycode key = Keycode::unknow;
+                        if (wParam >= 'A' && wParam <= 'Z') {
+                            key = (Keycode) ((int)Keycode::A + (wParam - 'A'));
+                        }
+                        Eventmanager::PushEvent(new KeyPressedEvent(key, window->GetId()));
+                    break;
                 }
-                Eventmanager::PushEvent(new KeyPressedEvent(key, window->GetId()));
-                break;
             }
-                
         }
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }

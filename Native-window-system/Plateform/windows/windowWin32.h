@@ -63,12 +63,12 @@ namespace SF {
         /**
          * @brief Présente le tableau de pixel coloré dans la fenètre
          */
-        void Present();
+        void Present() override;
 
         /**
          * donne un etat d'ouverture et de fermeture
          */
-        void SetOpen();
+        void SetOpen() override;
 
         /**
          * 2

@@ -1,74 +1,62 @@
-#include "ball.h"
+#include "ellipse.h"
 
 namespace SF {
     
-    Ball::Ball(Node position, int radius, int weight, int links) 
-        : m_center(position), m_radius(radius), m_weight(weight) {
-            
-            m_points.reserve(links);
-            for(int i = 0; i < links; i++) {
-                float angle = (2.0f * static_cast<float>(M_PI) * i) / links;
-                m_points.push_back(std::make_unique<Node>(
-                        Vector2D(m_radius * std::cos(angle) + m_center.mainPos.m_x, 
-                        m_radius * std::sin(angle) + m_center.mainPos.m_y)
+    Ellipse::Ellipse(Node position, int smallRadius, int largeRadius, int links)
+    : m_center(position), m_radiusB(smallRadius), m_radiusA(largeRadius) {
+        m_points.reserve(links);
+
+        for (int i = 0; i < links; i++) {
+            float angle = static_cast<float>(2.0f * M_PI * i) / (float)links;
+            m_points.push_back(
+                std::make_unique<Node>(
+                    Node(
+                        Vector2D(m_radiusA * std::cos(angle) + m_center.mainPos.m_x,
+                        m_radiusB * std::sin(angle) + m_center.mainPos.m_y)
                     )
-                );
-            }
-
-            float circumference = 2.0f * M_PI * m_radius;
-            m_areaIdeal = static_cast<float>(M_PI) * m_radius * m_radius;
-            m_chordLenght = circumference / static_cast<float>(links);
-            m_dstCenter = static_cast<float>(m_radius);
-
-            std::cout << "points: " << m_points.size() << std::endl;
-    }
-
-    /**
-     * @brief implémentation de l'intégration de verlet afin d'appliquer
-     * un mouvement fluide au différentes particules d'un système d'étude
-     * @param gravity la force de gravité appliquées à une particule
-     * @param deltaTime c'est une variation très faible du temps
-     */
-    void Ball::VerletIntegretion(float gravity, float deltaTime) {
-        for (auto& node : m_points) {
-            Vector2D copy (node->mainPos);
-
-            node->mainPos.m_x = 2 * node->mainPos.m_x - node->oldPos.m_x + 0 * deltaTime * deltaTime;
-            node->mainPos.m_y = 2 * node->mainPos.m_y - node->oldPos.m_y + gravity * deltaTime * deltaTime;
-
-            if (node->mainPos.m_x > 1750.0f) {
-                node->mainPos.m_x = 1750.0f;
-                node->oldPos.m_x = 1750.0f;
-            } 
-
-            if (node->mainPos.m_x <= 20.0f) {
-                node->mainPos.m_x = 20;
-                node->mainPos.m_x = 20;
-            }
-
-            if (node->mainPos.m_y >= 710.0f) {
-                node->mainPos.m_y = 710.0f;
-                node->oldPos.m_y = 710.0f;
-            }
-
-            node->oldPos = copy;
+                )
+            );
         }
 
-        Vector2D copy(m_center.mainPos);
+        float circumference = M_PI * (3 *(m_radiusA + m_radiusB) - std::sqrt((3 * m_radiusA + m_radiusB) * (m_radiusA + 3 * m_radiusB)));
+        m_areaIdeal = static_cast<float>(M_PI * m_radiusA * m_radiusB);
+        m_chordLenght = circumference / static_cast<float>(links);
+
+        std::cout << "points: " << m_points.size() << std::endl;
     }
 
-    void Ball::ApplyDisplacement(Vector2D direction, int intensity) {
+    void Ellipse::VerletIntegretion(float gravity, float deltaTime) {
+        for (auto& point : m_points) {
+            Vector2D copy(point->mainPos);
+
+            point->mainPos.m_x = 2 * point->mainPos.m_x - point->oldPos.m_x + 0 * deltaTime * deltaTime;
+            point->mainPos.m_y = 2 * point->mainPos.m_y - point->oldPos.m_y + gravity * deltaTime * deltaTime;
+
+            if (point->mainPos.m_x > 1650.0f) {
+                point->mainPos.m_x = 1650.0f;
+                point->oldPos.m_x = 1650.0f;
+            }
+
+            else if (point->mainPos.m_x <= 20.0f) {
+                point->mainPos.m_x = 20.0f;
+                point->oldPos.m_y = 20.0f;
+            }
+
+            else if (point->mainPos.m_y >= 600.0f) {
+                point->mainPos.m_y = 600.0f;
+                point->oldPos.m_y = 600.0f;
+            }
+            point->oldPos = copy;
+        }
+    }
+
+    void Ellipse::ApplyDisplacement(Vector2D direction, int intensity) {
         for (auto& point : m_points) {
             point->AccumulateDisplacement(direction.WithMagnitude(intensity));
         }
     }
 
-    /**
-     * @brief Contrainte d'aire. Cette fonction impose une aire idéale que le corps mou doit conserver. Elle
-     * applique sur chacun des points constituant la forme un vecteur normal à son déplacement dirigé vers
-     * l'extérieur de la forme
-     */
-    void Ball::ApplyDilatationConstraint() {
+    void Ellipse::ApplyDilatationConstraint() {
         int n = static_cast<int>(m_points.size());
         float currentArea   = ShapeArea();
         float circumference = m_chordLenght * n;
@@ -89,12 +77,7 @@ namespace SF {
         }
     }
 
-    /**
-     * @brief Restrein la distance que peut prendre deux points l'un de l'autre à cause de l'application
-     * de la moyenne des déplacements appliquées sur chacun d'eux en applicant un vecteur de deplacement
-     * dans la direction opposée de leur mouvement pour les rapprocher ou encore les repousser
-     */
-    void Ball::ApplyDistanceConstraint() {
+    void Ellipse::ApplyDistanceConstraint() {
 
         int n = static_cast<int>(m_points.size());
         for (int i = 0; i < n; i++) {
@@ -117,11 +100,19 @@ namespace SF {
         }
     }
 
-    /**
-     * @brief Détermine la position du centre virtuel parfait de la forme
-     * @return la positon exacte du centre parfait du polygone
-     */
-    Vector2D Ball::CentroidPsoition() {
+    float Ellipse::ShapeArea() {
+        float Area = 0.0f;
+        int n = static_cast<int>(m_points.size());
+        for (int i = 0; i < n; i ++) {
+            float W = m_points[(i + 1) % n]->mainPos.m_x - m_points[i]->mainPos.m_x;
+            float L = (m_points[(i + 1) % n]->mainPos.m_y + m_points[i]->mainPos.m_y) / 2.0f;
+
+            Area += W * L; 
+        }
+        return std::fabs(Area);
+    }
+
+    Vector2D Ellipse::CentroidPsoition() {
         int n = static_cast<int>(m_points.size());
         float signedArea = 0.0f;
         float cx = 0.0f, cy = 0.0f;
@@ -150,33 +141,14 @@ namespace SF {
         return Vector2D(cx, cy);
     }
 
-    /**
-     * @brief calcule l'aire courant du corps mou durant sa déformation
-     * @return l'aire du corps à un instant T
-     */
-    float Ball::ShapeArea() {
-        float Area = 0.0f;
-        int n = static_cast<int>(m_points.size());
-        for (int i = 0; i < n; i ++) {
-            float W = m_points[(i + 1) % n]->mainPos.m_x - m_points[i]->mainPos.m_x;
-            float L = (m_points[(i + 1) % n]->mainPos.m_y + m_points[i]->mainPos.m_y) / 2.0f;
 
-            Area += W * L; 
-        }
-        return std::fabs(Area);
-    }
-
-    /**
-     * @brief donne une position fixe à un point de la forme
-     * @param pos la position qu'on veut attribuer au point
-     * @param index l'index du noeud de la forme auquel on veut attribuer
-     */
-    void Ball::SetPointfixedPosition(Vector2D pos, int index) {
+    void Ellipse::SetPointfixedPosition(Vector2D pos, int index) {
         m_points[index]->mainPos = pos;
         m_points[index]->oldPos = pos;
     }
 
-    void Ball::Update(float gravity, float deltaTime, int iteration , Vector2D pos, Vector2D pos2, int index, int index2) {
+
+    void Ellipse::Update(float gravity, float deltaTime, int iteration , Vector2D pos, Vector2D pos2, int index, int index2) {
         float dst = m_points[0]->oldPos.Distance(m_points[1]->oldPos) + 5.0f;
         float dstcenter = m_center.oldPos.Distance(m_points[0]->oldPos);
         float floor = 700.0f;
@@ -205,33 +177,32 @@ namespace SF {
         std::cout << "Ball Position: (" << m_center.mainPos.m_x << ", " << m_center.mainPos.m_y << ")" << std::endl;
     }
 
-    void Ball::Update(float gravity, float deltaTime, int iteration) {
+
+    void Ellipse::Update(float gravity, float deltaTime, int iteration) {
         float dst = m_points[0]->oldPos.Distance(m_points[1]->oldPos) + 5.0f;
         float dstcenter = m_center.oldPos.Distance(m_points[0]->oldPos);
         float floor = 700.0f;
 
         float CurrentArea = ShapeArea();
         std::cout << "Aire : " << CurrentArea << std::endl;
-        m_center.mainPos.m_y += std::sqrt(2 * gravity);
+        //m_center.mainPos.m_y += std::sqrt(2 * gravity);
 
         VerletIntegretion(gravity, deltaTime);
         
         for (int iter = 0; iter < iteration; iter++) {
             ApplyDistanceConstraint();
             ApplyDilatationConstraint();
+            //ApplyCenterConstraint();
 
             for (auto& point : m_points) point->ApplyDisplacement();
             m_center.ApplyDisplacement();
         }
-        Vector2D newCentroid = CentroidPsoition();
-        Vector2D delta = newCentroid - m_center.mainPos;
-        m_center.mainPos += delta;
-        m_center.oldPos += delta;
         std::cout << "Aire: " << ShapeArea() << " (cible: " << m_areaIdeal << ")" << std::endl;
-        std::cout << "Ball Position: (" << m_center.mainPos.m_x << ", " << m_center.mainPos.m_y << ")" << std::endl;
+        std::cout <<  "Ellipse Position: (" << m_center.mainPos.m_x << ", " << m_center.mainPos.m_y << ")" << std::endl;
     }
 
-    void Ball::FillShape(FrameBuffer& fb, pixels color) {
+    
+    void Ellipse::FillShape(FrameBuffer& fb, pixels color) {
         int n = static_cast<int>(m_points.size());
         if (n < 3) return;
 
@@ -284,12 +255,7 @@ namespace SF {
         }
     }
 
-    /**
-     * @brief S'occupe de rendu de la pate de l'animal. dessine les formes géométriques la composant
-     * @param fb référence sur le tampon en mémoir utilisé pour afficher les pixels de la pate à l'écran
-     * @param color la couleur que prend le membre durant la phase de rendu
-     */
-    void Ball::Render(FrameBuffer& fb, pixels color) {
+    void Ellipse::Render(FrameBuffer& fb, pixels color) {
 
         FillShape(fb, color);
         for (int i = 0; i < m_points.size(); i++) {
@@ -300,5 +266,6 @@ namespace SF {
             DrawLine(m_points[i], m_points[i +1], fb);
         }
     }
-    
+
+
 } // namespace SF

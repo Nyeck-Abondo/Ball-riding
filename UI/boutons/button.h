@@ -1,12 +1,10 @@
 #pragma once
 
 #include "../uiElement.h"
-#include "../Native-window-system/Event/Eventmanager.h"
+#include "../../Native-window-system/Event/Eventmanager.h"
 #include <functional>
 
 namespace SF {
-
-    class Notification;
 
     enum class buttonState {
         none = 0, hover, clicked, pressed, realeased
@@ -30,6 +28,7 @@ namespace SF {
         ~Button();
 
         //GETTERS
+        
         Vector2D& GetPosition() { return m_pos; }
         int GetWidth() { return m_width; }
         int GetHeight() { return m_height; }
@@ -38,17 +37,22 @@ namespace SF {
 
         /**
          * @brief vérifie si la souris se trouve dans l'aire du bouton
+         * @param mouseX la position du curseur sur l'abscisse
+         * @param mouseY la position du curseur sur les ordonnées
          * @return true si le curseur se trouve sur le bouton et false sinon
          */
         bool IsInside(float mouseX, float mouseY);
 
         /**
          * @brief Modifie la couleur du bouton selon les états que celui ci peut bien avoir
+         * @param buffer le tampon en mémoire pour l'affichage des pixels à l'écran
+         * @param font la police utilisée pour l'écriture du contenu du bouton
          */
         void Render(FrameBuffer& buffer, stbtt_fontinfo& font) override;
 
         /**
          * @brief modifie l'état du bouton entre normal, hover et clicked
+         * @param event l'évènment qui permet le changement d'état du bouton
          */
         void Update(Event& event) override;
     };

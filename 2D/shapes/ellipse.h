@@ -2,50 +2,31 @@
 
 #include "shapes.h"
 
-
 namespace SF {
     
-    class Ball : public Shapes {
+    class Ellipse : public Shapes {
         private:
-        int m_radius;
-        int m_weight;
+        int m_radiusA, m_radiusB;
         Node m_center;
         std::vector<std::unique_ptr<Node>> m_points;
 
         float m_chordLenght;
         float m_areaIdeal;
-        float m_dstCenter;
 
         public:
-        Ball(Node position, int radius, int weight, int links);
-        ~Ball(){ }
+        Ellipse(Node position, int smallRadius, int largeRadius, int links);
+        ~Ellipse() { };
 
         //GETTERS
-        /**
-         * @brief Recupère le centre de la forme
-         * @return le centre la forme
-         */
         Node GetCenter() { return m_center; }
-
-        /**
-         * @brief recupère le rayon de la forme
-         * @return le rayon de la forme
-         */
-        int GetRadius() { return m_radius; }
-
-        /**
-         * @brief Recupère un point spécifique de la forme
-         * @return renvoie un pointeur sur le point spécifique de la forme
-         */
+        int GetSmallRadius() { return m_radiusB; }
+        int GetLargeRadius() { return m_radiusA; }
         std::unique_ptr<Node>& GetPoint(int index) override { return m_points[index]; }
-
-        /**
-         * @brief permet d'accéder à l'ensemble des points de la forme
-         * @return le tableau dynamique sur l'ensemble des points de la forme
-         */
         std::vector<std::unique_ptr<Node>>& GetAllPoints() override { return m_points; }
 
         //METHODES PUBLIQUES
+        Vector2D CentroidPsoition();
+        void SetPointfixedPosition(Vector2D pos, int index);
 
         void ApplyDisplacement(Vector2D direction, int intesity) override;
         
@@ -62,19 +43,6 @@ namespace SF {
          * l'extérieur de la forme
          */
         void ApplyDilatationConstraint()override;
-
-        /**
-         * @brief Détermine la position du centre virtuel parfait de la forme
-         * @return la positon exacte du centre parfait du polygone
-         */
-        Vector2D CentroidPsoition();
-
-        /**
-         * @brief donne une position fixe à un point de la forme
-         * @param pos la position qu'on veut attribuer au point
-         * @param index l'index du noeud de la forme auquel on veut attribuer
-         */
-        void SetPointfixedPosition(Vector2D pos, int index);
 
         /**
          * @brief implémentation de l'intégration de verlet afin d'appliquer
@@ -96,8 +64,6 @@ namespace SF {
          * @param color la couleur que prend le membre durant la phase de rendu
          */
         void Render(FrameBuffer& fb, pixels color) override;
-
-
         void Update(float gravity, float deltaTime, int iteration = 4) override;
         void Update(float gravity, float deltaTime, int iteration , Vector2D pos, Vector2D pos2, int index, int index2);
         void FillShape(FrameBuffer& fb, pixels color) override;

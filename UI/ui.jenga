@@ -1,0 +1,27 @@
+from Jenga import *
+
+with project("UI"):
+    staticlib()
+    language("C++")
+    cppdialect("C++17")
+    files([
+        "boutons/**.cpp",
+        "notification/**.cpp",
+        "panel/**.cpp",
+        "./**.cpp"
+    ])
+    includedirs([
+        "Native-window-system/Event",
+        "boutons",
+        "notification",
+        "panel",
+        "./"
+    ])
+    links([
+        "Native-window-system",
+        "render2D"
+    ])
+    dependson([
+        "Native-window-system",
+        "render2D"
+    ])

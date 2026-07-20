@@ -37,7 +37,7 @@ namespace SF {
             for (int i = 0; i <= dx; i++) {
                 int index = y * width + x;
                 if (x < 0 || x >= width || y < 0 || y >= height) continue;
-                buffer[index] = pixels(node->color);
+                buffer[index] = BlendPixel(pixels(node->color), buffer[index]);
 
                 if (p >= 0) {
                     y += uintY;
@@ -89,29 +89,35 @@ namespace SF {
             int p = 2 * dy - dx;
 
             for (int i = 0; i <= dx; i++) {
-                int index = y * width + x;
-                buffer[index] = pixels(color);
+                if (x >= 0 && x < width && y >= 0 && y < height) {
+                    int index = y * width + x;
+                    buffer[index] = BlendPixel(color, buffer[index]);
 
-                if (p >= 0) {
-                    y += uintY;
-                    p -= 2 * dx;
+                    if (p >= 0) {
+                        y += uintY;
+                        p -= 2 * dx;
+                    }
+                    x += uintx;
+                    p += 2 * dy;
                 }
-                x += uintx;
-                p += 2 * dy;
+                
             }
         } else {
             int p = 2 * dy - dx;
 
             for (int i = 0; i <= dy; i++) {
-                int index = y * width + x;
-                buffer[index] = BlendPixel(pixels(color), buffer[index]);
+                if (x >= 0 && x < width && y >= 0 && y < height) {
+                    int index = y * width + x;
+                    buffer[index] = BlendPixel(pixels(color), buffer[index]);
 
-                if (p >= 0) {
-                    x += uintx;
-                    p -= 2 * dy;
+                    if (p >= 0) {
+                        x += uintx;
+                        p -= 2 * dy;
+                    }
+                    y += uintY;
+                    p += 2 * dx;
                 }
-                y += uintY;
-                p += 2 * dx;
+                
             }
         }
     }

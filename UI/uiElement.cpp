@@ -2,6 +2,18 @@
 
 namespace SF {
     
+    /**
+     * @name DrawRoundedRect
+     * @brief Dessine un rectangle au sommets arondis
+     * @param x la position sur les abscisses
+     * @param y la position sur les ordonnées
+     * @param width la larageur du rectangle
+     * @param height la hauteur du rectangle
+     * @param radius le rayon de coubure des sommets
+     * @param fb la reférence au tampon en mémoire utilisé pour l'affichage du
+     * rectangle au coin arrondi
+     * @param color la couleur unie du rectangle
+     */
     void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color) {
         pixels* buffer = fb.GetBackBuffer();
         int bufW = (int)fb.GetBufferWidth();
@@ -36,6 +48,7 @@ namespace SF {
 
     /**
      * @brief permet de charger une image dans le framebuffer
+     * @param img la structure Image qui acceuillera les différents pixels de l'image
      * @return True si l'operation a reussie et false sinon
      */
     bool LoadImageFromAssets(Image& img) {
@@ -62,12 +75,15 @@ namespace SF {
 
 
     /**
-     * @brief Dessine une image presente a une position spécifique.
-     * idéale pour les sprites d'images
-     * @param img la structure contenant les informations de l'image
-     * @param pos la position à laquelle on voudrait dessiner l'image
-     * @param fb le frame buffer dans lequel on va passer les pixels de
-     * l'image à dessiner
+     * @name DrawImage
+     * @brief Affiche une image ciblée dans une sprite de dimensions connue
+     * @param img la structure qui acceuillera les informations de
+     * l'image chargée en mémoire.
+     * @param pos la position de l'image ciblée dans la sprite d'image
+     * @param sizeX la taille désirée de l'image ciblée
+     * @param sizeY la hauteur désirée pour l'image ciblée
+     * @param fb référnce au tampon en mémoire alloué pour l'affichage
+     * des images images chargées en mémoire
      */
     void DrawImageAt(Image& img, Vector2D pos, int sizeX, int sizeY, FrameBuffer& fb) {
         if (!img.pixel) return;
@@ -107,11 +123,12 @@ namespace SF {
     }
 
     /**
-     * @brief Dessine une image à une position spécifique
-     * @param img la structure contenant les informations de l'image
-     * @param pos la position à laquelle on voudrait dessiner l'image
-     * @param fb le frame buffer dans lequel on va passer les pixels de
-     * l'image à dessiner
+     * @name DrawImage
+     * @brief Affiche une image préalablement chargée en mémoire
+     * @param img la structure qui acceuillera les informations de
+     * l'image chargée en mémoire.
+     * @param fb référnce au tampon en mémoire alloué pour l'affichage
+     * des images images chargées en mémoire
      */
     void DrawImage(Image& img, FrameBuffer& fb) {
     pixels* buffer = fb.GetBackBuffer();
@@ -146,32 +163,42 @@ namespace SF {
 
     /**
      * @brief Charge une police d'écriture en mémoire
-     * @param font la structure stockant les informations de la police
-     * à utiliser
-     * @param location le chemin d'accès vers la police que l'on souhaite
-     * utiliser
+     * @param font structure stockant les informations de la de la police true type (ttf)
+     * @param location le chemin d'accès vers la police à charger en mémoire
      * @return true si l'opération est un succès, false sinon
      */
     bool LoadFont(stbtt_fontinfo& font, const char* location) {
-    FILE* f = fopen(location, "rb");
-    if (!f) return false;
+        FILE* f = fopen(location, "rb");
+        if (!f) return false;
 
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
-    fseek(f, 0, SEEK_SET);          // <-- AJOUT INDISPENSABLE : on revient au début
+        fseek(f, 0, SEEK_END);
+        long size = ftell(f);
+        fseek(f, 0, SEEK_SET);          // <-- AJOUT INDISPENSABLE : on revient au début
 
-    unsigned char* buffer = new unsigned char[size];
-    size_t read = fread(buffer, 1, size, f);
-    fclose(f);
+        unsigned char* buffer = new unsigned char[size];
+        size_t read = fread(buffer, 1, size, f);
+        fclose(f);
 
-    if (read != (size_t)size) {     // sécurité supplémentaire
-        delete[] buffer;
-        return false;
+        if (read != (size_t)size) {     // sécurité supplémentaire
+            delete[] buffer;
+            return false;
+        }
+
+        return stbtt_InitFont(&font, buffer, 0);
     }
 
-    return stbtt_InitFont(&font, buffer, 0);
-}
-
+    /**
+     * @brief Dessine le texte à un endroit précis de la fenêtre
+     * @param font la police chargée en mémoire grâce à LoadFont
+     * @param text la chaine de caractère constituant le message ou le texte
+     * voulant être affiché dans la fenêtre
+     * @param x la position sur les abscisses
+     * @param y la position sur les ordonnées
+     * @param size la taille de la police souhaité par l'utilisateur
+     * @param color la couleur du texte
+     * @param fb la reférence au tampon en mémoire utilisé pour l'affichage du
+     * rectangle 
+     */
     void DrawText(stbtt_fontinfo& font, const char* text, int x, int y, float size, pixels color, FrameBuffer& fb) {
         pixels* buffer = fb.GetBackBuffer();
         float scale = stbtt_ScaleForPixelHeight(&font, size);

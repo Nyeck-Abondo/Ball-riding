@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# frog-game – Jenga Workspace
+import os
+from Jenga import *
+
+with workspace("ball-riding"):
+    configurations(["Debug"])
+    targetoses([TargetOS.WINDOWS, TargetOS.LINUX])
+    targetarchs([TargetArch.X86_64, TargetArch.ARM64])
+    startproject("Frog-game")
+
+    with include("Native-window-system/Native-window-system.jenga"):
+        pass
+
+    with include("2D/render2D.jenga"):
+        pass
+
+    with include("UI/ui.jenga"):
+        pass
+
+    with project("frog"):
+        windowedapp()
+        language("C++")
+        cppdialect("C++17")
+        files(["sand-box/src/main.cpp"])
+        apppublisher("NAEM")
+        createdesktopshortcut(True)
+        appicon("ressources/tam_tam-removebg-preview.png")
+        includedirs([
+            "Native-window-system/Plateform",
+            "Native-window-system/Plateform/windows",
+            "Native-window-system/sleep",
+            "2D/shapes",
+            "2D/shapes/Frog",
+            "boutons",
+            "notification",
+            "panel",
+            "UI"
+        ])
+        links([
+            "Native-window-system",
+            "render2D",
+            "UI",
+        ])
+        dependson(["Native-window-system", "render2D", "UI"])
+        with filter("system:Windows"):
+            links(["user32", "kernel32", "gdi32"]); defines(["PLATEFORM_WINDOW"]); defines(["PLATEFORM_WINDOWS"])
+        with filter("config::Debug"):
+            symbols(True); optimize("OFF"); defines(["_DEBUG"])
+        with filter("config::Release"):
+            symbols(False); defines(["_RELEASE"])

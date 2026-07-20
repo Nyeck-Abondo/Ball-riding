@@ -13,7 +13,7 @@
 #endif
 
 #include <cstdint>
-#include "../event/event.h"
+#include "../Event/event.h"
 #include "../Event/Eventmanager.h"
 #include "windows/FrameBuffer.h"
 

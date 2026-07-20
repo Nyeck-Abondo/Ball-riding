@@ -1,4 +1,4 @@
-#include "EventManager.h"
+#include "Eventmanager.h"
 
 namespace SF {
     

@@ -1,0 +1,18 @@
+from Jenga import *
+
+with project("render2D"):
+    staticlib()
+    language("C++")
+    cppdialect("C++17")
+    files([
+        "render2D/**.cpp",
+        "shapes/**.cpp",
+        "shapes/Frog/**.cpp"
+    ])
+    includedirs([
+        "render2D",
+        "shapes",
+        "shapes/Frog"
+    ])
+    links(["Native-window-system"])
+    dependson(["Native-window-system"])
