@@ -6,7 +6,7 @@
 #include <string>
 #include "../../Window-manager/Window-manager.h"
 
-namespace SF {
+namespace sf {
     
     class windowWin32 : public Window {
     private:
@@ -85,4 +85,4 @@ namespace SF {
         FrameBuffer& GetFrameBuffer() override;
     };
     
-} // namespace SF
+} // namespace sf

@@ -7,7 +7,7 @@
 #include <iostream>
 #include "../render2D/algorithm2D.h"
 
-namespace SF {
+namespace sf {
     
     class Shapes {
         public:
@@ -16,7 +16,7 @@ namespace SF {
         virtual std::unique_ptr<Node>& GetPoint(int index) = 0;
         virtual std::vector<std::unique_ptr<Node>>& GetAllPoints() = 0;
 
-        virtual void ApplyDisplacement(Vector2D direction, int intesity) = 0;
+        virtual void ApplyDisplacement(maths::Vector2D direction, int intesity) = 0;
 
         /**
          * @brief Restrein la distance que peut prendre deux points l'un de l'autre à cause de l'application
@@ -38,7 +38,7 @@ namespace SF {
          * @param gravity la force de gravité appliquées à une particule
          * @param deltaTime c'est une variation très faible du temps
          */
-        virtual void VerletIntegretion(float gravity, float deltaTime) = 0;
+        virtual void VerletIntegretion(float clampX, float clampY, float gravity, float deltaTime) = 0;
 
         /**
          * @brief calcule l'aire courant du corps mou durant sa déformation
@@ -60,7 +60,7 @@ namespace SF {
          * @param iteration c'est le nombre de fois que les confraites physiques sont appliquées
          * à la forme générique par frames
          */
-        virtual void Update(float gravity, float deltaTime, int iteration = 4) = 0;
+        virtual void Update(float clampX, float clampY, float gravity, float deltaTime, int iteration = 4) = 0;
 
         /**
          * @brief Rempli une forme quelconque

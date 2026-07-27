@@ -4,14 +4,19 @@
 # frog-game – Jenga Workspace
 import os
 from Jenga import *
+from Jenga.GlobalToolchains import RegisterJengaGlobalToolchains
 
 with workspace("ball-riding"):
+    RegisterJengaGlobalToolchains()
     configurations(["Debug"])
     targetoses([TargetOS.WINDOWS, TargetOS.LINUX])
     targetarchs([TargetArch.X86_64, TargetArch.ARM64])
     startproject("Frog-game")
 
     with include("Native-window-system/Native-window-system.jenga"):
+        pass
+
+    with include("Maths/math.jenga"):
         pass
 
     with include("2D/render2D.jenga"):
@@ -32,6 +37,7 @@ with workspace("ball-riding"):
             "Native-window-system/Plateform",
             "Native-window-system/Plateform/windows",
             "Native-window-system/sleep",
+            "Maths",
             "2D/shapes",
             "2D/shapes/Frog",
             "boutons",
@@ -41,13 +47,14 @@ with workspace("ball-riding"):
         ])
         links([
             "Native-window-system",
+            "Mathlib",
             "render2D",
             "UI",
         ])
-        dependson(["Native-window-system", "render2D", "UI"])
+        dependson(["Native-window-system", "render2D", "UI", "Mathlib"])
         with filter("system:Windows"):
             links(["user32", "kernel32", "gdi32"]); defines(["PLATEFORM_WINDOW"]); defines(["PLATEFORM_WINDOWS"])
         with filter("config::Debug"):
             symbols(True); optimize("OFF"); defines(["_DEBUG"])
         with filter("config::Release"):
-            symbols(False); defines(["_RELEASE"])
+            symbols(False); optimize("speed"); defines(["_RELEASE"])

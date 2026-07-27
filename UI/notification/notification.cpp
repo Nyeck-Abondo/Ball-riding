@@ -1,6 +1,6 @@
 #include "notification.h"
 
-namespace SF {
+namespace sf {
     
     Notification::Notification(std::string text, int x, int y, int width, int height, int fontSize, Image icon, NotificationType type,
         pixels bgColor, pixels sidebarColor)
@@ -68,4 +68,4 @@ namespace SF {
         int labelY = m_currentY + m_height / 2 - 19;
         DrawText(font, m_notifText.c_str(), labelX, labelY, m_fontSize, pixels(255, 255, 255), buffer);
     }
-} // namespace SF
+} // namespace sf

@@ -3,7 +3,7 @@
 #include "shapes.h"
 
 
-namespace SF {
+namespace sf {
     
     class Ball : public Shapes {
         private:
@@ -17,6 +17,7 @@ namespace SF {
         float m_dstCenter;
 
         public:
+        Ball() {}
         Ball(Node position, int radius, int weight, int links);
         ~Ball(){ }
 
@@ -47,7 +48,7 @@ namespace SF {
 
         //METHODES PUBLIQUES
 
-        void ApplyDisplacement(Vector2D direction, int intesity) override;
+        void ApplyDisplacement(maths::Vector2D direction, int intesity) override;
         
         /**
          * @brief Restrein la distance que peut prendre deux points l'un de l'autre à cause de l'application
@@ -67,14 +68,14 @@ namespace SF {
          * @brief Détermine la position du centre virtuel parfait de la forme
          * @return la positon exacte du centre parfait du polygone
          */
-        Vector2D CentroidPsoition();
+        maths::Vector2D CentroidPsoition();
 
         /**
          * @brief donne une position fixe à un point de la forme
          * @param pos la position qu'on veut attribuer au point
          * @param index l'index du noeud de la forme auquel on veut attribuer
          */
-        void SetPointfixedPosition(Vector2D pos, int index);
+        void SetPointfixedPosition(maths::Vector2D pos, int index);
 
         /**
          * @brief implémentation de l'intégration de verlet afin d'appliquer
@@ -82,7 +83,7 @@ namespace SF {
          * @param gravity la force de gravité appliquées à une particule
          * @param deltaTime c'est une variation très faible du temps
          */
-        void VerletIntegretion(float gravity, float deltaTime) override;
+        void VerletIntegretion(float clampX, float clampY ,float gravity, float deltaTime) override;
 
         /**
          * @brief calcule l'aire courant du corps mou durant sa déformation
@@ -98,9 +99,9 @@ namespace SF {
         void Render(FrameBuffer& fb, pixels color) override;
 
 
-        void Update(float gravity, float deltaTime, int iteration = 4) override;
-        void Update(float gravity, float deltaTime, int iteration , Vector2D pos, Vector2D pos2, int index, int index2);
+        void Update(float clampX, float clampY, float gravity, float deltaTime, int iteration = 4) override;
+        void Update(float clampX, float clampY, float gravity, float deltaTime, int iteration , maths::Vector2D pos, maths::Vector2D pos2, int index, int index2);
         void FillShape(FrameBuffer& fb, pixels color) override;
     };
 
-} // namespace SF
+} // namespace sf

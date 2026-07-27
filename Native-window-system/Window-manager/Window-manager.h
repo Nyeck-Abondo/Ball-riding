@@ -4,7 +4,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace SF {
+namespace sf {
     class Window;
     
     class WindowManager {
@@ -41,4 +41,4 @@ namespace SF {
             static Window* GetWindow(uint32_t id);
     };
 
-} // namespace SF
+} // namespace sf

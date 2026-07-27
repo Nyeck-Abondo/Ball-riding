@@ -1,0 +1,8 @@
+from Jenga import *
+
+with project("Mathlib"):
+    staticlib()
+    language("C++")
+    cppdialect("C++17")
+    files(["./**.cpp"])
+    includedirs(["./"])

@@ -12,7 +12,7 @@
 #include "../Native-window-system/Event/event.h"
 #include "../2D/render2D/algorithm2D.h"
 
-namespace SF {
+namespace sf {
 
     //============================================================
     // CLASS: UiElemenT
@@ -41,12 +41,12 @@ namespace SF {
         int height = 0;
         int wantedWidth = 0;
         int wantedHeight = 0;
-        Vector2D pos;
+        maths::Vector2D pos;
         const char* location;
 
         //constructeur
         Image() {}
-        Image(const char* locate, Vector2D position, int wWidth = 0, int wHeight = 0) 
+        Image(const char* locate, maths::Vector2D position, int wWidth = 0, int wHeight = 0) 
         : location(locate), pos(position), wantedHeight(wHeight), wantedWidth(wWidth) {}
 
         /**
@@ -80,21 +80,7 @@ namespace SF {
      * @param fb référnce au tampon en mémoire alloué pour l'affichage
      * des images images chargées en mémoire
      */
-    void DrawImageAt(Image& img, Vector2D pos,  int sizeX, int sizeY, FrameBuffer& fb);
-
-    /**
-     * @name DrawRoundedRect
-     * @brief Dessine un rectangle au sommets arondis
-     * @param x la position sur les abscisses
-     * @param y la position sur les ordonnées
-     * @param width la larageur du rectangle
-     * @param height la hauteur du rectangle
-     * @param radius le rayon de coubure des sommets
-     * @param fb la reférence au tampon en mémoire utilisé pour l'affichage du
-     * rectangle au coin arrondi
-     * @param color la couleur unie du rectangle
-     */
-    void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color);
+    void DrawImageAt(Image& img, maths::Vector2D pos,  int sizeX, int sizeY, FrameBuffer& fb);
 
     /**
      * @name DrawRoundedRect
@@ -138,4 +124,4 @@ namespace SF {
      */
     void DrawText(stbtt_fontinfo& font, const char* text, int x, int y, float size, pixels color, FrameBuffer& fb);
 
-} // namespace SF
+} // namespace sf

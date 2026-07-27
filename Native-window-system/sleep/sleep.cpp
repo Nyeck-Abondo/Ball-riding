@@ -1,6 +1,6 @@
 #include "sleep.h"
 
-namespace SF {
+namespace sf {
     
     void SleepNano(uint64_t nanoseconds) {
         if (nanoseconds == 0) return;
@@ -22,4 +22,4 @@ namespace SF {
         SleepNano(millisecond * 1000000);
     }
 
-} // namespace SF
+} // namespace sf

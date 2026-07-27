@@ -2,49 +2,55 @@
 #include "../../Native-window-system/sleep/sleep.h"
 #include "../../UI/boutons/button.h"
 #include "../../UI/notification/notification.h"
-#include "../../2D/shapes/ball.h"
-#include "../../2D/shapes/ellipse.h"
 #include "../../2D/shapes/enemies.h"
 #include "../../UI/panel/panel.h"
-#include "../../2D/shapes/Frog/legs.h"
+#include "../../2D/shapes/Frog/Frog.h"
 #include <chrono>
 
 int main() {
-    SF::Window* win32 = SF::Window::Create("Ball-riding", 1920, 1080);
+    sf::Window* win32 = sf::Window::Create("Ball-riding", 1920, 1080);
     win32->Initialize();
 
-    SF::Notification notif(
+    sf::Notification notif(
         "Bienvenue Player !", 
         win32->GetWidth() / 2 - 300,
         500, 600, 70, 45, 
-        SF::Image("C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/002-actif-1.png", 500, 75),
-        SF::NotificationType::standardNotificationDown,
-        SF::pixels(13, 9, 20),
-        SF::pixels(58, 186, 75)
+        sf::Image("C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/002-actif-1.png", 500, 75),
+        sf::NotificationType::standardNotificationDown,
+        sf::pixels(13, 9, 20),
+        sf::pixels(58, 186, 75)
     );
 
-    SF::Image picture(
+    sf::Image picture(
         "C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/Swamp_landscape_for_game_202607082311.jpeg",
-        SF::Vector2D(0, 0),
+        sf::maths::Vector2D(0, 0),
         1550, 800
     );
     
-    SF::LoadImageFromAssets(picture);
+    sf::LoadImageFromAssets(picture);
 
-    SF::Ellipse elhead(SF::Node(SF::Vector2D(500, 150)), 45, 30, 20);
+    sf::animals::Frog player(
+        sf::maths::Vector2D(200, 200), 
+        sf::pixels(13, 117, 74, 255), 
+        sf::pixels(13, 117, 74, 255), 
+        100.0f, 150.0f, 20.0f, 50.0f, 250.0f
+    );
 
-    SF::Ball ball(SF::Vector2D(500, 200), 50, 8, 20);
-    SF::Ball head(SF::Vector2D(500, 200), 43, 8, 30);
-    SF::Legs leg(SF::Legs(SF::FootType::Left, ball.GetPoint(15)->mainPos, 1, 1, 30, 30));
+    sf::animals::Frog p2(
+        sf::maths::Vector2D(300, 200),
+        sf::pixels(237, 148, 8, 255), 
+        sf::pixels(237, 148, 8, 255), 
+        100.0f, 150.0f, 20.0f, 50.0f, 250.0f
+    );
 
     stbtt_fontinfo font;
-    bool fontOK = SF::LoadFont(font, "C:/Users/Administrator/Documents/Github/Ball-riding/assets/Font/RussoOne-Regular.ttf");
+    bool fontOK = sf::LoadFont(font, "C:/Users/Administrator/Documents/Github/Ball-riding/assets/Font/RussoOne-Regular.ttf");
     
 
     bool run = true;
     bool change = false;
-    SF::Vector2D jump(0.0f, 2.0f);
-    SF::Vector2D forward(2.0f, 0.0f);
+    sf::maths::Vector2D jump(0.0f, 2.0f);
+    sf::maths::Vector2D forward(2.0f, 0.0f);
 
     auto lastUpdateTime = std::chrono::high_resolution_clock::now();
 
@@ -54,92 +60,62 @@ int main() {
         lastUpdateTime = currentTime;
         float deltaTime = elapsedTime.count();
         
-        while (auto event = SF::Eventmanager::PollEvent()){
+        while (auto event = sf::Eventmanager::PollEvent()){
             
             if (event->GetId() == win32->GetId()) {
 
-                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (ev->GetKeyCode() == SF::Keycode::C) {
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::C) {
                         change = true;
                     }
                 }
 
-                if (const auto* ev = event->GetIf<SF::MouseClickEvent>()) {
+                if (const auto* ev = event->GetIf<sf::MouseClickEvent>()) {
                     std::cout << "clixk a : " << ev->GetPosX() << "; " << ev->GetPosY() << std::endl;
                 }
 
-                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (ev->GetKeyCode() == SF::Keycode::B) {
-                        ball.ApplyDisplacement(jump, 170);
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::B) {
+                        player.GetBody().ApplyDisplacement(jump, 170);
                     }
                 }
 
-                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (ev->GetKeyCode() == SF::Keycode::D) {
-                        ball.ApplyDisplacement(forward, 10);
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::D) {
+                        player.GetBody().ApplyDisplacement(forward, 10);
                     }
                 }
 
-                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (ev->GetKeyCode() == SF::Keycode::Q) {
-                        ball.ApplyDisplacement(forward * -1, 10);
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::Q) {
+                        player.GetBody().ApplyDisplacement(forward * -1, 10);
                     }
                 }
 
-                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (ev->GetKeyCode() == SF::Keycode::Up) {
-                        head.ApplyDisplacement(jump, 170);
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::K) {
+                        player.ApplyDamage(5);
                     }
                 }
 
-                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (ev->GetKeyCode() == SF::Keycode::Right) {
-                        head.ApplyDisplacement(forward, 10);
-                    }
-                }
-
-                if (const auto* ev = event->GetIf<SF::KeyPressedEvent>()) {
-                    if (ev->GetKeyCode() == SF::Keycode::Left) {
-                        head.ApplyDisplacement(forward * -1, 10);
-                    }
-                }
             }
-            if (const auto* ev = event->GetIf<SF::WindowClosedEvent>()) {
+            if (const auto* ev = event->GetIf<sf::WindowClosedEvent>()) {
                 run = false;
             }
         }
 
         if (!change) {
-            SF::DrawImage(picture, win32->GetFrameBuffer());
+            sf::DrawImage(picture, win32->GetFrameBuffer());
             
-            //head.SetPointfixedPosition(SF::Vector2D(ball.GetCenter().mainPos.m_x + 5, ball.GetCenter().mainPos.m_y + ball.GetRadius() + 40.0f), 0);
-            //head.SetPointfixedPosition(SF::Vector2D(ball.GetCenter().mainPos.m_x + 30, ball.GetCenter().mainPos.m_y + ball.GetRadius() + 30.0f), 20);
-            ball.Update(900.0f, deltaTime, 395);
-
-             head.Update(
-                 900.0f, 
-                 deltaTime, 
-                 1100, 
-                 SF::Vector2D(ball.GetCenter().mainPos.m_x - 35.0f, ball.GetCenter().mainPos.m_y + ball.GetRadius() - 70.0f), 
-                 SF::Vector2D(ball.GetCenter().mainPos.m_x + 60, ball.GetCenter().mainPos.m_y + ball.GetRadius() - 80.0f),
-                 0, 14
-             );
-
-
-            leg.Update(900.0f, deltaTime, ball.GetCenter().mainPos + 12);
-
-            ball.Render(win32->GetFrameBuffer(), SF::pixels(13, 117, 74, 255));
-            head.Render(win32->GetFrameBuffer(), SF::pixels(13, 117, 74, 255));
-            //elhead.Render(win32->GetFrameBuffer(), SF::pixels(34, 145, 47, 240));
-            leg.Render(win32->GetFrameBuffer(), SF::pixels(120, 9, 11));
-
+            player.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
+            player.Render(win32->GetFrameBuffer());
             win32->Present();
         }
         else {
             win32->Shutdown();
         }
 
-        SF::sleep(17);
+        sf::sleep(17);
     }
 
     picture.FreeImage();

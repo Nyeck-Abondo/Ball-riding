@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace SF {
+namespace sf {
     enum class EventType {
         KeyUp, windowResize, mouseRelease,
         mouseMove, mouseclick, keydown, windowClosed
@@ -196,4 +196,4 @@ namespace SF {
         static EventType GetStaticType() { return EventType::mouseRelease; }
     };
 
-} // namespace SF
+} // namespace sf

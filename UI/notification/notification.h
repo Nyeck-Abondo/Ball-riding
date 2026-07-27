@@ -3,7 +3,7 @@
 #include "../uiElement.h"
 #include <string>
 
-namespace SF {
+namespace sf {
     
     enum NotificationType {
         standardNotification,
@@ -51,4 +51,4 @@ namespace SF {
         void Update(Event& event) override;
     };
 
-} // namespace SF
+} // namespace sf

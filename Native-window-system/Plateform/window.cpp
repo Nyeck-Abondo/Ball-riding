@@ -7,7 +7,7 @@
     #include "linux/XCBwindow.h"
 #endif
 
-namespace SF {
+namespace sf {
     Window* Window::Create(const char* Title, uint32_t width, uint32_t height) {
         #if defined(SF_PLATEFORM_WINDOWS)
             return new windowWin32(Title, width, height);

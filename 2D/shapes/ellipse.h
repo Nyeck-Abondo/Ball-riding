@@ -2,13 +2,14 @@
 
 #include "shapes.h"
 
-namespace SF {
+namespace sf {
     
     class Ellipse : public Shapes {
         private:
         int m_radiusA, m_radiusB;
         Node m_center;
         std::vector<std::unique_ptr<Node>> m_points;
+        std::vector<Node> m_initialPosition;
 
         float m_chordLenght;
         float m_areaIdeal;
@@ -25,10 +26,10 @@ namespace SF {
         std::vector<std::unique_ptr<Node>>& GetAllPoints() override { return m_points; }
 
         //METHODES PUBLIQUES
-        Vector2D CentroidPsoition();
-        void SetPointfixedPosition(Vector2D pos, int index);
+        maths::Vector2D CentroidPsoition();
+        void SetPointfixedPosition(maths::Vector2D pos, int index);
 
-        void ApplyDisplacement(Vector2D direction, int intesity) override;
+        void ApplyDisplacement(maths::Vector2D direction, int intesity) override;
         
         /**
          * @brief Restrein la distance que peut prendre deux points l'un de l'autre à cause de l'application
@@ -44,13 +45,15 @@ namespace SF {
          */
         void ApplyDilatationConstraint()override;
 
+        void ApplyCenterConstraint(float stifness = 0.5f);
+
         /**
          * @brief implémentation de l'intégration de verlet afin d'appliquer
          * un mouvement fluide au différentes particules d'un système d'étude
          * @param gravity la force de gravité appliquées à une particule
          * @param deltaTime c'est une variation très faible du temps
          */
-        void VerletIntegretion(float gravity, float deltaTime) override;
+        void VerletIntegretion(float clampX, float clampY, float gravity, float deltaTime) override;
 
         /**
          * @brief calcule l'aire courant du corps mou durant sa déformation
@@ -64,9 +67,9 @@ namespace SF {
          * @param color la couleur que prend le membre durant la phase de rendu
          */
         void Render(FrameBuffer& fb, pixels color) override;
-        void Update(float gravity, float deltaTime, int iteration = 4) override;
-        void Update(float gravity, float deltaTime, int iteration , Vector2D pos, Vector2D pos2, int index, int index2);
+        void Update(float clampX, float clampY, float gravity, float deltaTime, int iteration = 4) override;
+        void Update(float clampX, float clampY, float gravity, float deltaTime, int iteration , maths::Vector2D pos, maths::Vector2D pos2, int index, int index2);
         void FillShape(FrameBuffer& fb, pixels color) override;
     };
 
-} // namespace SF
+} // namespace sf

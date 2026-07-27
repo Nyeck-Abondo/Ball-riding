@@ -12,7 +12,7 @@ with project("render2D"):
     includedirs([
         "render2D",
         "shapes",
-        "shapes/Frog"
+        "shapes/Frog",
     ])
-    links(["Native-window-system"])
-    dependson(["Native-window-system"])
+    links(["Native-window-system", "Mathlib"])
+    dependson(["Native-window-system", "Mathlib"])

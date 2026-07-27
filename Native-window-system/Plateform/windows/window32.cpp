@@ -4,7 +4,7 @@
 
 #include "windowWin32.h"
 
-namespace SF {
+namespace sf {
 
     const wchar_t* CLASSNAME = L"Ball-Riding";
     uint32_t idCounter = 0;

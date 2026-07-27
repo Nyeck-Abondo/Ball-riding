@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../render2D/algorithm2D.h"
+#include "../ellipse.h"
 
-namespace SF {
+namespace sf {
     //==================================================    
     // ENUM: FootType
     // DESCRIPTION: Elle défini le type de pied, gauche ou
@@ -19,19 +19,19 @@ namespace SF {
     // d'un animal par des segments reliés les uns au autres.
     //==========================================================
     struct Anchor {
-        Vector2D m_pos;
-        Vector2D m_oldPos;
+        maths::Vector2D m_pos;
+        maths::Vector2D m_oldPos;
         int m_radius;
-        Vector2D displacement;
+        maths::Vector2D displacement;
         int average = 0;
 
         Anchor() {}
-        Anchor(Vector2D pos, int radius) : m_pos(pos), m_oldPos(pos), m_radius(radius) {}
+        Anchor(maths::Vector2D pos, int radius) : m_pos(pos), m_oldPos(pos), m_radius(radius) {}
 
         /**
          * @brief somme les vecteur de déplacements appliqué à une ancre spécifique
          */
-        void AccumulateDisplacement(const Vector2D& move) {
+        void AccumulateDisplacement(const maths::Vector2D& move) {
             displacement += move;
             average++;
         }
@@ -43,7 +43,7 @@ namespace SF {
         void ApplyDisplacement() {
             if (average > 0) {
                 m_pos += displacement / average;
-                displacement = Vector2D(0, 0);
+                displacement = maths::Vector2D(0, 0);
                 average = 0;
             }
         }
@@ -57,16 +57,19 @@ namespace SF {
     class Legs {
         private:
         FootType m_type;
-        Anchor m_thighAncre;
-        Anchor m_legAncre;
-        Anchor m_footAncre;
+        int m_thighLenght;
+        int m_LegLenght;
         float m_angle;
         float m_chordLenght;
-        std::vector<std::unique_ptr<Node>> m_node;
-        std::vector<std::unique_ptr<Anchor>> m_ancre;
+        float m_legQuality;
+        Ellipse m_thigh;
+        std::vector<maths::Vector2D> m_thighNode;
+        std::vector<maths::Vector2D> m_legNOde;
+        std::vector<Anchor> m_ancre;
 
         public:
-        Legs(FootType type, Vector2D& position, int thighLenght,int Leglenght, int thighWeight, int legWeight);
+        Legs(const Legs&) = delete;
+        Legs(FootType type, maths::Vector2D& position, int thighLenght,int Leglenght, int thighQuality, int legWeight);
         ~Legs() {}
 
         /**
@@ -94,14 +97,18 @@ namespace SF {
          * @param fixedPosition position à laquelle l'articulation de la cuisse est fixée
          * sur le corp de l'animal
          */
-        void ApplyDistanceConstraint(Vector2D fixedPosition);
+        void ApplyDistanceConstraint(maths::Vector2D fixedPosition);
+
+        void FindThighNodePosition();
+
+        void FindLegNodePosition();
 
         /**
          * @brief Donne une position fixe à l'ancre d'une articulation tout le long de la 
          * simulation / durée de vie de l'animal
          * @param position le point où l'ancre doit être placée
          */
-        void SetAnchorPosition(Vector2D& position);
+        void SetAnchorPosition(maths::Vector2D& position);
 
         /**
          * @brief met à jour la position de la pâte tout le long de la simulatoin
@@ -111,7 +118,7 @@ namespace SF {
          * @param fixedPosition la position fixe de l'ancre représentant l'articulation reliée directement
          * au corps de l'animal
          */
-        void Update(float gravity , float deltaTime, Vector2D fixedPosition);
+        void Update(float gravity , float deltaTime, maths::Vector2D fixedPosition);
 
         /**
          * @brief S'occupe de rendu de la pate de l'animal. dessine les formes géométriques la composant
@@ -119,6 +126,14 @@ namespace SF {
          * @param color la couleur que prend le membre durant la phase de rendu
          */
         void Render(FrameBuffer& fb ,pixels color);
+
+        void IsColide();
+
+        maths::Vector2D BezierPoint(float t, maths::Vector2D p0, maths::Vector2D control, maths::Vector2D p1) {
+            maths::Vector2D a = p0 + (control - p0) * t;
+            maths::Vector2D b = control + (p1 - control) * t;
+            return a + (b - a) * t;
+        }
     };
 
-} // namespace SF
+} // namespace sf

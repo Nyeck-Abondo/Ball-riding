@@ -3,7 +3,7 @@
 #include <cstdint>
 
 
-namespace SF {
+namespace sf {
 
     struct pixels {
         uint8_t b;
@@ -54,4 +54,4 @@ namespace SF {
     };
 
     
-} // namespace SF
+} // namespace sf

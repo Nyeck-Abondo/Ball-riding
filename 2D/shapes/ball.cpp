@@ -1,6 +1,6 @@
 #include "ball.h"
 
-namespace SF {
+namespace sf {
     
     Ball::Ball(Node position, int radius, int weight, int links) 
         : m_center(position), m_radius(radius), m_weight(weight) {
@@ -9,7 +9,7 @@ namespace SF {
             for(int i = 0; i < links; i++) {
                 float angle = (2.0f * static_cast<float>(M_PI) * i) / links;
                 m_points.push_back(std::make_unique<Node>(
-                        Vector2D(m_radius * std::cos(angle) + m_center.mainPos.m_x, 
+                        maths::Vector2D(m_radius * std::cos(angle) + m_center.mainPos.m_x, 
                         m_radius * std::sin(angle) + m_center.mainPos.m_y)
                     )
                 );
@@ -20,7 +20,6 @@ namespace SF {
             m_chordLenght = circumference / static_cast<float>(links);
             m_dstCenter = static_cast<float>(m_radius);
 
-            std::cout << "points: " << m_points.size() << std::endl;
     }
 
     /**
@@ -29,9 +28,9 @@ namespace SF {
      * @param gravity la force de gravité appliquées à une particule
      * @param deltaTime c'est une variation très faible du temps
      */
-    void Ball::VerletIntegretion(float gravity, float deltaTime) {
+    void Ball::VerletIntegretion(float clampX, float clampY ,float gravity, float deltaTime) {
         for (auto& node : m_points) {
-            Vector2D copy (node->mainPos);
+            maths::Vector2D copy (node->mainPos);
 
             node->mainPos.m_x = 2 * node->mainPos.m_x - node->oldPos.m_x + 0 * deltaTime * deltaTime;
             node->mainPos.m_y = 2 * node->mainPos.m_y - node->oldPos.m_y + gravity * deltaTime * deltaTime;
@@ -54,10 +53,10 @@ namespace SF {
             node->oldPos = copy;
         }
 
-        Vector2D copy(m_center.mainPos);
+        maths::Vector2D copy(m_center.mainPos);
     }
 
-    void Ball::ApplyDisplacement(Vector2D direction, int intensity) {
+    void Ball::ApplyDisplacement(maths::Vector2D direction, int intensity) {
         for (auto& point : m_points) {
             point->AccumulateDisplacement(direction.WithMagnitude(intensity));
         }
@@ -83,8 +82,8 @@ namespace SF {
             Node& previus = *m_points[i == 0 ? n - 1 : i - 1];
             Node& next = *m_points[(i + 1) % n];
 
-            Vector2D secant = (previus.mainPos - next.mainPos).Perpendicular();
-            Vector2D normal = secant.WithMagnitude(offset);
+            maths::Vector2D secant = (previus.mainPos - next.mainPos).Perpendicular();
+            maths::Vector2D normal = secant.WithMagnitude(offset);
             current.AccumulateDisplacement(normal);
         }
     }
@@ -102,14 +101,14 @@ namespace SF {
             //Node& previus = *m_points[i == 0 ? n - 1 : i - 1];
             Node& next = *m_points[i == 0 ? n - 1 : i - 1];
 
-            //Vector2D secant = (next.mainPos - previus.mainPos).Perpendicular();
-            Vector2D diff = next.mainPos - current.mainPos;
+            //maths::Vector2D secant = (next.mainPos - previus.mainPos).Perpendicular();
+            maths::Vector2D diff = next.mainPos - current.mainPos;
 
             float dist = diff.Norme();
 
             if (dist > m_chordLenght) {
                 float disterr = (dist - m_chordLenght) / 2.0f;
-                Vector2D move = diff.WithMagnitude(disterr);
+                maths::Vector2D move = diff.WithMagnitude(disterr);
 
                 current.AccumulateDisplacement(move);
                 next.AccumulateDisplacement(move * -1.0f);
@@ -121,14 +120,14 @@ namespace SF {
      * @brief Détermine la position du centre virtuel parfait de la forme
      * @return la positon exacte du centre parfait du polygone
      */
-    Vector2D Ball::CentroidPsoition() {
+    maths::Vector2D Ball::CentroidPsoition() {
         int n = static_cast<int>(m_points.size());
         float signedArea = 0.0f;
         float cx = 0.0f, cy = 0.0f;
 
         for (int i = 0; i < n; i++) {
-            const Vector2D& p0 = m_points[i]->mainPos;
-            const Vector2D& p1 = m_points[(i + 1) % n]->mainPos;
+            const maths::Vector2D& p0 = m_points[i]->mainPos;
+            const maths::Vector2D& p1 = m_points[(i + 1) % n]->mainPos;
 
             float cross = p0.m_x * p1.m_y - p1.m_x * p0.m_y;
             signedArea += cross;
@@ -140,14 +139,14 @@ namespace SF {
 
         if (std::fabs(signedArea) < 1e-5f) {
             // figure dégénérée (aire ~0) : repli sur la moyenne simple
-            Vector2D avg(0, 0);
+            maths::Vector2D avg(0, 0);
             for (auto& p : m_points) avg += p->mainPos;
             return avg / static_cast<float>(n);
         }
 
         cx /= (6.0f * signedArea);
         cy /= (6.0f * signedArea);
-        return Vector2D(cx, cy);
+        return maths::Vector2D(cx, cy);
     }
 
     /**
@@ -171,21 +170,20 @@ namespace SF {
      * @param pos la position qu'on veut attribuer au point
      * @param index l'index du noeud de la forme auquel on veut attribuer
      */
-    void Ball::SetPointfixedPosition(Vector2D pos, int index) {
+    void Ball::SetPointfixedPosition(maths::Vector2D pos, int index) {
         m_points[index]->mainPos = pos;
         m_points[index]->oldPos = pos;
     }
 
-    void Ball::Update(float gravity, float deltaTime, int iteration , Vector2D pos, Vector2D pos2, int index, int index2) {
+    void Ball::Update(float clampX, float clampY, float gravity, float deltaTime, int iteration , maths::Vector2D pos, maths::Vector2D pos2, int index, int index2) {
         float dst = m_points[0]->oldPos.Distance(m_points[1]->oldPos) + 5.0f;
         float dstcenter = m_center.oldPos.Distance(m_points[0]->oldPos);
         float floor = 700.0f;
 
         float CurrentArea = ShapeArea();
-        std::cout << "Aire : " << CurrentArea << std::endl;
         m_center.mainPos.m_y += std::sqrt(2 * gravity);
 
-        VerletIntegretion(gravity, deltaTime);
+        VerletIntegretion(clampX, clampY, gravity, deltaTime);
         
         for (int iter = 0; iter < iteration; iter++) {
             ApplyDistanceConstraint();
@@ -197,24 +195,21 @@ namespace SF {
             SetPointfixedPosition(pos2, index2);
         }
         
-        Vector2D newCentroid = CentroidPsoition();
-        Vector2D delta = newCentroid - m_center.mainPos;
+        maths::Vector2D newCentroid = CentroidPsoition();
+        maths::Vector2D delta = newCentroid - m_center.mainPos;
         m_center.mainPos += delta;
         m_center.oldPos += delta;
-        std::cout << "Aire: " << ShapeArea() << " (cible: " << m_areaIdeal << ")" << std::endl;
-        std::cout << "Ball Position: (" << m_center.mainPos.m_x << ", " << m_center.mainPos.m_y << ")" << std::endl;
     }
 
-    void Ball::Update(float gravity, float deltaTime, int iteration) {
+    void Ball::Update(float clampX, float clampY, float gravity, float deltaTime, int iteration) {
         float dst = m_points[0]->oldPos.Distance(m_points[1]->oldPos) + 5.0f;
         float dstcenter = m_center.oldPos.Distance(m_points[0]->oldPos);
         float floor = 700.0f;
 
         float CurrentArea = ShapeArea();
-        std::cout << "Aire : " << CurrentArea << std::endl;
         m_center.mainPos.m_y += std::sqrt(2 * gravity);
 
-        VerletIntegretion(gravity, deltaTime);
+        VerletIntegretion(clampX, clampY, gravity, deltaTime);
         
         for (int iter = 0; iter < iteration; iter++) {
             ApplyDistanceConstraint();
@@ -223,12 +218,10 @@ namespace SF {
             for (auto& point : m_points) point->ApplyDisplacement();
             m_center.ApplyDisplacement();
         }
-        Vector2D newCentroid = CentroidPsoition();
-        Vector2D delta = newCentroid - m_center.mainPos;
+        maths::Vector2D newCentroid = CentroidPsoition();
+        maths::Vector2D delta = newCentroid - m_center.mainPos;
         m_center.mainPos += delta;
         m_center.oldPos += delta;
-        std::cout << "Aire: " << ShapeArea() << " (cible: " << m_areaIdeal << ")" << std::endl;
-        std::cout << "Ball Position: (" << m_center.mainPos.m_x << ", " << m_center.mainPos.m_y << ")" << std::endl;
     }
 
     void Ball::FillShape(FrameBuffer& fb, pixels color) {
@@ -256,8 +249,8 @@ namespace SF {
             float scanY = y + 0.5f; // centre du pixel : évite les cas limites sur les sommets
 
             for (int i = 0; i < n; i++) {
-                const Vector2D& p1 = m_points[i]->mainPos;
-                const Vector2D& p2 = m_points[(i + 1) % n]->mainPos;
+                const maths::Vector2D& p1 = m_points[i]->mainPos;
+                const maths::Vector2D& p2 = m_points[(i + 1) % n]->mainPos;
 
                 if (p1.m_y == p2.m_y) continue; // arête horizontale ignorée
 
@@ -301,4 +294,4 @@ namespace SF {
         }
     }
     
-} // namespace SF
+} // namespace sf

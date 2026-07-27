@@ -4,7 +4,7 @@
 #include "../../Native-window-system/Event/Eventmanager.h"
 #include <functional>
 
-namespace SF {
+namespace sf {
 
     enum class buttonState {
         none = 0, hover, clicked, pressed, realeased
@@ -13,7 +13,7 @@ namespace SF {
     class Button : public UiElement{
         private:
             buttonState m_state;
-            Vector2D m_pos;
+            maths::Vector2D m_pos;
             int m_width, m_height, m_radius;
             int m_fontSize;
             std::string m_label;
@@ -24,12 +24,12 @@ namespace SF {
 
         //constructeur
         Button() {}
-        Button(const std::string label, Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
+        Button(const std::string label, maths::Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
         ~Button();
 
         //GETTERS
         
-        Vector2D& GetPosition() { return m_pos; }
+        maths::Vector2D& GetPosition() { return m_pos; }
         int GetWidth() { return m_width; }
         int GetHeight() { return m_height; }
 
@@ -57,4 +57,4 @@ namespace SF {
         void Update(Event& event) override;
     };
 
-} // namespace SF
+} // namespace sf

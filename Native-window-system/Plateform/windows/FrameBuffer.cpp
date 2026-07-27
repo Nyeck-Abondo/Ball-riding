@@ -1,6 +1,6 @@
 #include "FrameBuffer.h"
 
-namespace SF  {
+namespace sf  {
     
     FrameBuffer::FrameBuffer(uint32_t width, uint32_t height) 
         : m_width(width), m_height(height) {
@@ -60,4 +60,4 @@ namespace SF  {
         ReleaseDC(hwnd, hdc);
     }
 
-} // namespace SF
+} // namespace sf

@@ -17,7 +17,7 @@
 #include "../Event/Eventmanager.h"
 #include "windows/FrameBuffer.h"
 
-namespace SF {
+namespace sf {
     class Window {
     
     public:
@@ -85,4 +85,4 @@ namespace SF {
 
     };
     
-} // namespace SF
+} // namespace sf

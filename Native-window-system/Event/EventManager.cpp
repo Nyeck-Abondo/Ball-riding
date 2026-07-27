@@ -1,6 +1,6 @@
 #include "Eventmanager.h"
 
-namespace SF {
+namespace sf {
     
     //=======================================
     //INITIALISATION DES VARIABLES STATIQUES
@@ -70,4 +70,4 @@ namespace SF {
         return result;
     }
 
-} // namespace SF
+} // namespace sf

@@ -1,7 +1,7 @@
 #include "Window-manager.h"
 #include "../window.h"
 
-namespace SF {
+namespace sf {
     
     //==================================================
     //INITIALISATION DES VARIABLES STATIQUES
@@ -42,4 +42,4 @@ namespace SF {
         }
     }
 
-} // namespace SF
+} // namespace sf

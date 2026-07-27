@@ -1,8 +1,8 @@
 #include "button.h"
 
-namespace SF {
+namespace sf {
     
-    Button::Button(const std::string label, Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick)
+    Button::Button(const std::string label, maths::Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick)
     : m_label(label), m_pos(pos), m_width(width), m_height(height), m_radius(radius), m_colorNormal(colorNormal), m_colorPressed(colorPressed),
     m_colorHover(colorHover), m_onClick(onClick), m_state(buttonState::none), m_fontSize(fontSize) { }
 
@@ -74,4 +74,4 @@ namespace SF {
         DrawText(font, m_label.c_str(), labelX, labelY, m_fontSize, pixels(255, 255, 255, 255), buffer);
     }
 
-} // namespace SF
+} // namespace sf

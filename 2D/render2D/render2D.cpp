@@ -1,6 +1,6 @@
 #include "algorithm2D.h"
 
-namespace SF {
+namespace sf {
     
     pixels BlendPixel(pixels src, pixels dst) {
         uint16_t a  = src.a;
@@ -65,9 +65,21 @@ namespace SF {
 
     }
 
-        
+    void DrawFillCircle(maths::Vector2D center, int radius, pixels color, FrameBuffer& fb) {
+        pixels* buffer = fb.GetBackBuffer();
+        for (int y = center.m_y - radius; y < center.m_y + radius; y++) {
+            for (int x = center.m_x - radius; x < center.m_x + radius; x++) {
+                int dx = x - center.m_x;
+                int dy = y - center.m_y;
+                if ((dx * dx + dy * dy) <= radius * radius) {
+                    int index = y * fb.GetBufferWidth() + x;
+                    buffer[index] = BlendPixel(color, buffer[index]);
+                }
+            }
+        }
+    }
 
-    void DrawLine(Vector2D& other, Vector2D& vect, pixels color, FrameBuffer& bf) {
+    void DrawLine(maths::Vector2D& other, maths::Vector2D& vect, pixels color, FrameBuffer& bf) {
         pixels* buffer = bf.GetBackBuffer();
         int width  = bf.GetBufferWidth();
         int height = bf.GetBufferHeight();
@@ -122,4 +134,55 @@ namespace SF {
         }
     }
 
-} // namespace SF
+        /**
+     * @name DrawRoundedRect
+     * @brief Dessine un rectangle au sommets arondis
+     * @param x la position sur les abscisses
+     * @param y la position sur les ordonnées
+     * @param width la larageur du rectangle
+     * @param height la hauteur du rectangle
+     * @param radius le rayon de coubure des sommets
+     * @param fb la reférence au tampon en mémoire utilisé pour l'affichage du
+     * rectangle au coin arrondi
+     * @param color la couleur unie du rectangle
+     */
+    void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color) {
+        pixels* buffer = fb.GetBackBuffer();
+        int bufW = (int)fb.GetBufferWidth();
+        int bufH = (int)fb.GetBufferHeight();
+
+        for (int dy = 0; dy < height; dy++) {
+            for (int dx = 0; dx < width; dx++) {
+                int fx = x + dx;   // coordonnée ABSOLUE dans le framebuffer
+                int fy = y + dy;
+
+                if (fx < 0 || fx >= bufW) continue;
+                if (fy < 0 || fy >= bufH) continue;
+
+                // gestion des coins arrondis (optionnelle pour l'instant)
+                int cornerX = -1, cornerY = -1;
+                if (dx < radius && dy < radius) { cornerX = radius; cornerY = radius; }
+                else if (dx < radius && dy >= height - radius) { cornerX = radius; cornerY = height - radius; }
+                else if (dx >= width - radius && dy < radius) { cornerX = width - radius; cornerY = radius; }
+                else if (dx >= width - radius && dy >= height - radius) { cornerX = width - radius; cornerY = height - radius; }
+
+                if (cornerX != -1) {
+                    int ddx = dx - cornerX;
+                    int ddy = dy - cornerY;
+                    if (ddx * ddx + ddy * ddy > radius * radius) continue;
+                }
+
+                int index = fy * bufW + fx;
+                buffer[index] = BlendPixel(color, buffer[index]);
+            }
+        }
+    }
+
+    void Rectangle::DrawRenctangle(int tickness, FrameBuffer& fb) {
+        if (tickness > 0)
+        DrawRoundedRect(pos.m_x - tickness / 2.f, pos.m_y - tickness / 2.f, outWith + tickness, outHeight + tickness, radius, fb, borderColor);
+        DrawRoundedRect(pos.m_x, pos.m_y, width, height, radius, fb, innerColor);
+    }
+
+
+} // namespace sf

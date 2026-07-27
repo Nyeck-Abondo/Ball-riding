@@ -1,9 +1,9 @@
 #include "panel.h"
 
-namespace SF {
+namespace sf {
     
-    Panel::Panel(std::string title, Vector2D pos, int width, int height, int radius, float fadeIn,
-         float fontSize, pixels color, pixels titleColor, Image& picture, Image& icon, Vector2D spritelocate,
+    Panel::Panel(std::string title, maths::Vector2D pos, int width, int height, int radius, float fadeIn,
+         float fontSize, pixels color, pixels titleColor, Image& picture, Image& icon, maths::Vector2D spritelocate,
         stbtt_fontinfo& font)
     : m_title(title), m_pos(pos), m_fadeInTime(fadeIn), m_fontSize(fontSize),
     m_color(color), m_titleColor(titleColor), m_picture(picture), m_icon(icon),
@@ -15,9 +15,9 @@ namespace SF {
         m_icon.pos.m_x += m_currentPos.m_x;
     }
 
-    void Panel::AddButton(const std::string label, Vector2D pos, int width, int height, int radius,
+    void Panel::AddButton(const std::string label, maths::Vector2D pos, int width, int height, int radius,
         int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick) {
-        Vector2D relativPos = pos + m_currentPos; 
+        maths::Vector2D relativPos = pos + m_currentPos; 
         m_button.push_back(std::make_unique<Button>(label, relativPos, width, height, radius, fontSize, colorNormal,
         colorHover, colorPressed, onClick));
     }
@@ -54,7 +54,7 @@ namespace SF {
             float delta = (int)(3000 / m_fadeInTime);
 
             for (auto& btn : m_button) {
-                Vector2D& btns = btn->GetPosition();
+                maths::Vector2D& btns = btn->GetPosition();
                 btns.m_x += delta;
             }
             m_icon.pos.m_x += delta;
@@ -62,4 +62,4 @@ namespace SF {
         }
     }
 
-} // namespace SF
+} // namespace sf

@@ -3,13 +3,13 @@
 #include "../uiElement.h"
 #include "../boutons/button.h"
 
-namespace SF {
+namespace sf {
     
     class Panel : public UiElement {
         private:
-        Vector2D m_pos;
-        Vector2D m_currentPos;
-        Vector2D m_spriteLocate;
+        maths::Vector2D m_pos;
+        maths::Vector2D m_currentPos;
+        maths::Vector2D m_spriteLocate;
         int m_fontSize;
         int m_width, m_height;
         int m_radius;
@@ -24,13 +24,13 @@ namespace SF {
         pixels m_titleColor;
 
         public:
-            Panel(std::string title, Vector2D pos, int width, int height, int radius
+            Panel(std::string title, maths::Vector2D pos, int width, int height, int radius
                 ,float fadeIn, float fontSize, pixels color,pixels titleColor,Image& picture,
-                Image& icon, Vector2D spritelocate, stbtt_fontinfo& font);
+                Image& icon, maths::Vector2D spritelocate, stbtt_fontinfo& font);
             ~Panel() { }
 
             //GETTERS
-            Vector2D GetPosition() { return m_pos; }
+            maths::Vector2D GetPosition() { return m_pos; }
             bool GetShowed() { return m_IsShow; }
             int GetWidth() { return m_width; }
             int GetHeight() { return m_height; }
@@ -39,7 +39,7 @@ namespace SF {
             void Update(Event& event) override;
             void Animate();
             void Render(FrameBuffer& buffer, stbtt_fontinfo& font) override;
-            void AddButton(const std::string label, Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
+            void AddButton(const std::string label, maths::Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
     };
 
-} // namespace SF
+} // namespace sf

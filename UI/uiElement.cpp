@@ -1,50 +1,6 @@
 #include "uiElement.h"
 
-namespace SF {
-    
-    /**
-     * @name DrawRoundedRect
-     * @brief Dessine un rectangle au sommets arondis
-     * @param x la position sur les abscisses
-     * @param y la position sur les ordonnées
-     * @param width la larageur du rectangle
-     * @param height la hauteur du rectangle
-     * @param radius le rayon de coubure des sommets
-     * @param fb la reférence au tampon en mémoire utilisé pour l'affichage du
-     * rectangle au coin arrondi
-     * @param color la couleur unie du rectangle
-     */
-    void DrawRoundedRect(int x, int y, int width, int height, int radius, FrameBuffer& fb, pixels color) {
-        pixels* buffer = fb.GetBackBuffer();
-        int bufW = (int)fb.GetBufferWidth();
-        int bufH = (int)fb.GetBufferHeight();
-
-        for (int dy = 0; dy < height; dy++) {
-            for (int dx = 0; dx < width; dx++) {
-                int fx = x + dx;   // coordonnée ABSOLUE dans le framebuffer
-                int fy = y + dy;
-
-                if (fx < 0 || fx >= bufW) continue;
-                if (fy < 0 || fy >= bufH) continue;
-
-                // gestion des coins arrondis (optionnelle pour l'instant)
-                int cornerX = -1, cornerY = -1;
-                if (dx < radius && dy < radius) { cornerX = radius; cornerY = radius; }
-                else if (dx < radius && dy >= height - radius) { cornerX = radius; cornerY = height - radius; }
-                else if (dx >= width - radius && dy < radius) { cornerX = width - radius; cornerY = radius; }
-                else if (dx >= width - radius && dy >= height - radius) { cornerX = width - radius; cornerY = height - radius; }
-
-                if (cornerX != -1) {
-                    int ddx = dx - cornerX;
-                    int ddy = dy - cornerY;
-                    if (ddx * ddx + ddy * ddy > radius * radius) continue;
-                }
-
-                int index = fy * bufW + fx;
-                buffer[index] = BlendPixel(color, buffer[index]);
-            }
-        }
-    }
+namespace sf {
 
     /**
      * @brief permet de charger une image dans le framebuffer
@@ -85,7 +41,7 @@ namespace SF {
      * @param fb référnce au tampon en mémoire alloué pour l'affichage
      * des images images chargées en mémoire
      */
-    void DrawImageAt(Image& img, Vector2D pos, int sizeX, int sizeY, FrameBuffer& fb) {
+    void DrawImageAt(Image& img, maths::Vector2D pos, int sizeX, int sizeY, FrameBuffer& fb) {
         if (!img.pixel) return;
         
         pixels* buffer = fb.GetBackBuffer();
@@ -233,4 +189,4 @@ namespace SF {
         }
     }
 
-} // namespace SF
+} // namespace sf

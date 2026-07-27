@@ -15,7 +15,7 @@
  * PATTERN PROXY POUR UTILISATION DE POOLeVENT
  * ===========================================
  */
-namespace SF {
+namespace sf {
     class EventTracker {
         private:
         //evenement en cours de traitement
