@@ -47,6 +47,7 @@ namespace sf {
             //METHODES PUBLIQUES
             void Move();
             void ApplyDamage(int damage);
+            void CatchAnimation();
             void AttackAnimation();
             void DrawHealthBar(FrameBuffer& fb);
             void DrawEyes(FrameBuffer& fb);

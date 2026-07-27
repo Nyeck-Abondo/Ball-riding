@@ -38,8 +38,15 @@ int main() {
 
     sf::animals::Frog p2(
         sf::maths::Vector2D(300, 200),
-        sf::pixels(237, 148, 8, 255), 
-        sf::pixels(237, 148, 8, 255), 
+        sf::pixels(204, 136, 6, 250), 
+        sf::pixels(204, 136, 6, 250), 
+        100.0f, 150.0f, 20.0f, 50.0f, 250.0f
+    );
+
+    sf::animals::Frog p3(
+        sf::maths::Vector2D(200, 200), 
+        sf::pixels(115, 18, 52, 200), 
+        sf::pixels(115, 18, 52, 200), 
         100.0f, 150.0f, 20.0f, 50.0f, 250.0f
     );
 
@@ -93,8 +100,38 @@ int main() {
                 }
 
                 if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::G) {
+                        player.AttackAnimation();
+                    }
+                }
+
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
                     if (ev->GetKeyCode() == sf::Keycode::K) {
                         player.ApplyDamage(5);
+                    }
+                }
+
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::Up) {
+                        p3.GetBody().ApplyDisplacement(jump, 170);
+                    }
+                }
+
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::Right) {
+                        p3.GetBody().ApplyDisplacement(forward, 10);
+                    }
+                }
+
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::Left) {
+                        p3.GetBody().ApplyDisplacement(forward * -1, 10);
+                    }
+                }
+
+                if (const auto* ev = event->GetIf<sf::KeyPressedEvent>()) {
+                    if (ev->GetKeyCode() == sf::Keycode::P) {
+                        p3.ApplyDamage(5);
                     }
                 }
 
@@ -108,6 +145,10 @@ int main() {
             sf::DrawImage(picture, win32->GetFrameBuffer());
             
             player.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
+            p2.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
+            p3.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
+            p2.Render(win32->GetFrameBuffer());
+            p3.Render(win32->GetFrameBuffer());
             player.Render(win32->GetFrameBuffer());
             win32->Present();
         }

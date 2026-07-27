@@ -24,7 +24,10 @@ namespace sf {
             f_healthBar.width = (f_health * f_healthBar.width) / ((hCopy <= 0) ? 1 : hCopy);
         }
 
-        void Frog::AttackAnimation() {}
+        void Frog::AttackAnimation() {
+            maths::Vector2D move{3.0f, 17.0f};
+            f_body.ApplyDisplacement(move, 100);
+        }
 
         void Frog::DrawHealthBar(FrameBuffer& fb) {
             if (f_health > 2 * f_maxhealth / 3) f_healtState = HealthState::GOOD;
@@ -50,7 +53,7 @@ namespace sf {
 
         void Frog::DrawEyes(FrameBuffer& fb) {
             maths::Vector2D clip = f_head.GetCenter().mainPos;
-            DrawFillCircle(sf::maths::Vector2D(clip.m_x + 20.0f, clip.m_y - 30.0f), 18, sf::pixels(13, 117, 74, 255), fb);
+            DrawFillCircle(sf::maths::Vector2D(clip.m_x + 20.0f, clip.m_y - 30.0f), 18, f_color, fb);
             DrawFillCircle(sf::maths::Vector2D(clip.m_x + 20.0f, clip.m_y - 30.0f), 10, sf::pixels(255, 192, 41, 210), fb);
             DrawFillCircle(sf::maths::Vector2D(clip.m_x - 10.0f, clip.m_y + 10.0f), 5, sf::pixels(58, 171, 72, 200), fb);
             DrawRoundedRect(
