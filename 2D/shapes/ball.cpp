@@ -176,13 +176,6 @@ namespace sf {
     }
 
     void Ball::Update(float clampX, float clampY, float gravity, float deltaTime, int iteration , maths::Vector2D pos, maths::Vector2D pos2, int index, int index2) {
-        float dst = m_points[0]->oldPos.Distance(m_points[1]->oldPos) + 5.0f;
-        float dstcenter = m_center.oldPos.Distance(m_points[0]->oldPos);
-        float floor = 700.0f;
-
-        float CurrentArea = ShapeArea();
-        m_center.mainPos.m_y += std::sqrt(2 * gravity);
-
         VerletIntegretion(clampX, clampY, gravity, deltaTime);
         
         for (int iter = 0; iter < iteration; iter++) {

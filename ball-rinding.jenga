@@ -54,6 +54,9 @@ with workspace("ball-riding"):
         dependson(["Native-window-system", "render2D", "UI", "Mathlib"])
         with filter("system:Windows"):
             links(["user32", "kernel32", "gdi32"]); defines(["PLATEFORM_WINDOW"]); defines(["PLATEFORM_WINDOWS"])
+            addldflag("-static-libgcc"); addldflag("-static-libstdc++") ; addldflag("-static")
+            addldflag("-lwinpthread")
+            defines(["UNICODE", "_UNICODE"]);
         with filter("config::Debug"):
             symbols(True); optimize("OFF"); defines(["_DEBUG"])
         with filter("config::Release"):

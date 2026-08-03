@@ -4,6 +4,7 @@
 #include "../../UI/notification/notification.h"
 #include "../../2D/shapes/enemies.h"
 #include "../../UI/panel/panel.h"
+#include "../../2D/shapes/Frog/legs.h"
 #include "../../2D/shapes/Frog/Frog.h"
 #include <chrono>
 
@@ -15,20 +16,20 @@ int main() {
         "Bienvenue Player !", 
         win32->GetWidth() / 2 - 300,
         500, 600, 70, 45, 
-        sf::Image("C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/002-actif-1.png", 500, 75),
+        sf::Image("assets/image/002-actif-1.png", 500, 75),
         sf::NotificationType::standardNotificationDown,
         sf::pixels(13, 9, 20),
         sf::pixels(58, 186, 75)
     );
 
     sf::Image picture(
-        "C:/Users/Administrator/Documents/Github/Ball-riding/assets/image/Swamp_landscape_for_game_202607082311.jpeg",
+        "assets/image/Swamp_landscape_for_game_202607082311.jpeg",
         sf::maths::Vector2D(0, 0),
         1550, 800
     );
     
     sf::LoadImageFromAssets(picture);
-
+    
     sf::animals::Frog player(
         sf::maths::Vector2D(200, 200), 
         sf::pixels(13, 117, 74, 255), 
@@ -38,20 +39,22 @@ int main() {
 
     sf::animals::Frog p2(
         sf::maths::Vector2D(300, 200),
-        sf::pixels(204, 136, 6, 250), 
-        sf::pixels(204, 136, 6, 250), 
+        sf::pixels(204, 136, 6, 255), 
+        sf::pixels(204, 136, 6, 255), 
         100.0f, 150.0f, 20.0f, 50.0f, 250.0f
     );
 
     sf::animals::Frog p3(
         sf::maths::Vector2D(200, 200), 
-        sf::pixels(115, 18, 52, 200), 
-        sf::pixels(115, 18, 52, 200), 
+        sf::pixels(115, 18, 52, 255), 
+        sf::pixels(115, 18, 52, 255), 
         100.0f, 150.0f, 20.0f, 50.0f, 250.0f
     );
+    sf::maths::Vector2D centerPos(p3.GetBody().GetCenter().mainPos + 2);
+    sf::Legs lg1(sf::FootType::Left, centerPos, 50, 30, 30, 20);
 
     stbtt_fontinfo font;
-    bool fontOK = sf::LoadFont(font, "C:/Users/Administrator/Documents/Github/Ball-riding/assets/Font/RussoOne-Regular.ttf");
+    bool fontOK = sf::LoadFont(font, "assets/Font/RussoOne-Regular.ttf");
     
 
     bool run = true;
@@ -140,6 +143,7 @@ int main() {
                 run = false;
             }
         }
+        centerPos = p3.GetBody().GetCenter().mainPos + 2;
 
         if (!change) {
             sf::DrawImage(picture, win32->GetFrameBuffer());
@@ -147,9 +151,13 @@ int main() {
             player.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
             p2.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
             p3.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
+            // lg1.Update(500, deltaTime, centerPos);
+            notif.Render(win32->GetFrameBuffer(), font);
+            notif.Animation();
             p2.Render(win32->GetFrameBuffer());
             p3.Render(win32->GetFrameBuffer());
             player.Render(win32->GetFrameBuffer());
+            // lg1.Render(win32->GetFrameBuffer(), sf::pixels(255, 185, 150, 200));
             win32->Present();
         }
         else {
