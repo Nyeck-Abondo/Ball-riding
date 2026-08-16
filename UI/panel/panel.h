@@ -38,7 +38,7 @@ namespace sf {
 
             void Update(Event& event) override;
             void Animate();
-            void Render(FrameBuffer& buffer, stbtt_fontinfo& font) override;
+            void Render(render::Renderer& renderer, stbtt_fontinfo& font) override;
             void AddButton(const std::string label, maths::Vector2D pos, int width, int height, int radius, int fontSize, pixels colorNormal, pixels colorHover, pixels colorPressed, std::function<void()> onClick);
     };
 

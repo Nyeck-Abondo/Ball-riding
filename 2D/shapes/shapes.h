@@ -5,7 +5,7 @@
 #include <memory>
 #include <algorithm>
 #include <iostream>
-#include "../render2D/algorithm2D.h"
+#include "../Renderer2D/Renderer.h"
 
 namespace sf {
     
@@ -51,7 +51,7 @@ namespace sf {
          * @param fb référence sur le tampon en mémoir utilisé pour afficher les pixels de la pate à l'écran
          * @param color la couleur que prend le membre durant la phase de rendu
          */
-        virtual void Render(FrameBuffer& fb, pixels color) = 0;
+        virtual void Render(render::Renderer& renderer, pixels color) = 0;
 
         /**
          * @brief Mets à jour la position de la forme aucours du temps
@@ -68,7 +68,7 @@ namespace sf {
          * à l'écran
          * @param color la couleur de remplissage de la forme
          */
-        virtual void FillShape(FrameBuffer& fb, pixels color) = 0;
+        virtual void FillShape(render::Renderer& renderer, pixels color) = 0;
     };
 
 } // namespace sf_shapes

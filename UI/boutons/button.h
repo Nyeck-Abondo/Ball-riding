@@ -48,7 +48,7 @@ namespace sf {
          * @param buffer le tampon en mémoire pour l'affichage des pixels à l'écran
          * @param font la police utilisée pour l'écriture du contenu du bouton
          */
-        void Render(FrameBuffer& buffer, stbtt_fontinfo& font) override;
+        void Render(render::Renderer& renderer, stbtt_fontinfo& font) override;
 
         /**
          * @brief modifie l'état du bouton entre normal, hover et clicked

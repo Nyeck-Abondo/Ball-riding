@@ -22,25 +22,25 @@ namespace sf {
         colorHover, colorPressed, onClick));
     }
 
-    void Panel::Render(FrameBuffer& buffer, stbtt_fontinfo& font) {
-        DrawRoundedRect(
-            m_currentPos.m_x, m_currentPos.m_y,
+    void Panel::Render(render::Renderer& renderer, stbtt_fontinfo& font) {
+        renderer.DrawRoundedRectangle(
+            m_currentPos,
             m_width, m_height,
             m_radius, 
-            buffer,
+            60,
             m_color
         );
 
         int lenght = m_title.size();
         int cursorX = m_currentPos.m_x + (m_width - (lenght * m_fontSize) / 2);
         int cursorY = m_currentPos.m_y + m_fontSize;
-        DrawText(font, m_title.c_str(), cursorX, cursorY, m_fontSize, m_titleColor, buffer);
+        DrawText(font, m_title.c_str(), cursorX, cursorY, m_fontSize, m_titleColor, renderer);
 
         for (auto& btn : m_button) {
-            btn->Render(buffer, m_fontBtn);
+            btn->Render(renderer, m_fontBtn);
         }
 
-        DrawImageAt(m_icon, m_spriteLocate, 128, 128, buffer);
+        DrawImageAt(m_icon, m_spriteLocate, 128, 128, renderer);
     }
 
     void Panel::Update(Event& event) {

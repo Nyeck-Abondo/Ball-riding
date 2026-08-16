@@ -10,7 +10,7 @@
 #include "../libs/stb_image.h"
 #include "../Native-window-system/Plateform/windows/FrameBuffer.h"
 #include "../Native-window-system/Event/event.h"
-#include "../2D/render2D/algorithm2D.h"
+#include "../2D/Renderer2D/Renderer.h"
 
 namespace sf {
 
@@ -26,7 +26,7 @@ namespace sf {
             
             //  METHODES COMMUNES
             virtual void Update(Event& event) = 0;
-            virtual void Render(FrameBuffer& buffer, stbtt_fontinfo& font) = 0;
+            virtual void Render(render::Renderer& renderer, stbtt_fontinfo& font) = 0;
 
     };
 
@@ -67,7 +67,9 @@ namespace sf {
      * @param fb référnce au tampon en mémoire alloué pour l'affichage
      * des images images chargées en mémoire
      */
-    void DrawImage(Image& img, FrameBuffer& fb);
+    void DrawImage(Image& img, render::Renderer& renderer);
+
+    void DrawMap(Image& img, render::Renderer& renderer);
 
     /**
      * @name DrawImage
@@ -80,7 +82,7 @@ namespace sf {
      * @param fb référnce au tampon en mémoire alloué pour l'affichage
      * des images images chargées en mémoire
      */
-    void DrawImageAt(Image& img, maths::Vector2D pos,  int sizeX, int sizeY, FrameBuffer& fb);
+    void DrawImageAt(Image& img, maths::Vector2D pos,  int sizeX, int sizeY, render::Renderer& renderer);
 
     /**
      * @name DrawRoundedRect
@@ -93,7 +95,7 @@ namespace sf {
      * rectangle
      * @param color la couleur unie du rectangle
      */
-    void DrawRectangle(int x, int y, int width, int height, FrameBuffer& fb);
+    void DrawRectangle(int x, int y, int width, int height, render::Renderer& renderer);
 
     /**
      * @brief permet de charger une image dans le framebuffer
@@ -122,6 +124,6 @@ namespace sf {
      * @param fb la reférence au tampon en mémoire utilisé pour l'affichage du
      * rectangle 
      */
-    void DrawText(stbtt_fontinfo& font, const char* text, int x, int y, float size, pixels color, FrameBuffer& fb);
+    void DrawText(stbtt_fontinfo& font, const char* text, int x, int y, float size, pixels color, render::Renderer& renderer);
 
 } // namespace sf

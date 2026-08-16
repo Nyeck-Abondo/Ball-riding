@@ -29,6 +29,45 @@ namespace sf {
         return true;
     }
 
+    void DrawMap(Image& img, render::Renderer& renderer) {
+        if (!img.pixel) return;
+
+        pixels* buffer  = renderer.GetWindow().GetFrameBuffer().GetBackBuffer();
+        int winWidth    = (int)renderer.GetWindow().GetWidth();
+        int winHeight   = (int)renderer.GetWindow().GetHeight();
+
+        // GetCamera() renvoie une copie (pas une référence), on la stocke localement
+        render::Camera cam = renderer.GetCamera();
+        maths::Vector2D topView = cam.GetVisibleTopCorner(); // coin haut-gauche visible, en coordonnées MONDE
+        float viewWidth  = cam.GetSize().m_x;
+        float viewHeight = cam.GetSize().m_y;
+        float zoom       = cam.GetZoom();
+        if (zoom <= 0.0f) zoom = 1.0f; // sécurité anti division par zéro
+
+        // Échelle entre la résolution "logique" de la caméra et la résolution réelle de la fenêtre
+        float scaleX = winWidth  / viewWidth;
+        float scaleY = winHeight / viewHeight;
+
+        for (int sy = 0; sy < winHeight; sy++) {
+            float worldY = topView.m_y + (sy / scaleY) / zoom;
+            int imgY = (int)(worldY - img.pos.m_y);
+            if (imgY < 0 || imgY >= img.height) continue;
+
+            int rowSrc = imgY * img.width;
+            int rowDst = sy * winWidth;
+
+            for (int sx = 0; sx < winWidth; sx++) {
+                float worldX = topView.m_x + (sx / scaleX) / zoom;
+                int imgX = (int)(worldX - img.pos.m_x);
+                if (imgX < 0 || imgX >= img.width) continue;
+
+                int srcIndex = rowSrc + imgX;
+                int dstIndex = rowDst + sx;
+
+                buffer[dstIndex] = BlendPixel(img.pixel[srcIndex], buffer[dstIndex]);
+            }
+        }
+    }
 
     /**
      * @name DrawImage
@@ -41,18 +80,18 @@ namespace sf {
      * @param fb référnce au tampon en mémoire alloué pour l'affichage
      * des images images chargées en mémoire
      */
-    void DrawImageAt(Image& img, maths::Vector2D pos, int sizeX, int sizeY, FrameBuffer& fb) {
+    void DrawImageAt(Image& img, maths::Vector2D pos, int sizeX, int sizeY, render::Renderer& renderer) {
         if (!img.pixel) return;
         
-        pixels* buffer = fb.GetBackBuffer();
+        pixels* buffer = renderer.GetWindow().GetFrameBuffer().GetBackBuffer();
         
-        //calcul du ration de l'image
+        //calcul du ratio de l'image
         float scaleX = (float)sizeX / (float)img.wantedWidth;
         float scaleY = (float)sizeY / (float)img.wantedHeight;
 
         for (int y = 0; y < img.wantedHeight; y++) {
             int fy = (int)img.pos.m_y + y;
-            if (fy < 0 || fy >= fb.GetBufferHeight()) continue;
+            if (fy < 0 || fy >= renderer.GetWindow().GetHeight()) continue;
 
             int localY = static_cast<int>(y * scaleY);
             if(localY >= sizeY) localY = sizeY - 1;
@@ -62,7 +101,7 @@ namespace sf {
 
             for (int x = 0; x < img.wantedWidth; x++) {
                 int fx = (int)img.pos.m_x + x;
-                if (fx < 0 || fx >= fb.GetBufferWidth()) continue;
+                if (fx < 0 || fx >= renderer.GetWindow().GetWidth()) continue;
 
                 int localX = static_cast<int>(x * scaleX);
                 if(localX >= sizeX) localX = sizeX - 1;
@@ -71,11 +110,10 @@ namespace sf {
                 if (pxX >= img.width) pxX = img.width - 1;
 
                 pixels src = img.pixel[pxY * img.width + pxX];
-                int dstIndex = fy * fb.GetBufferWidth() + fx;
+                int dstIndex = fy * renderer.GetWindow().GetWidth() + fx;
                 buffer[dstIndex] = BlendPixel(src, buffer[dstIndex]);
             }
         }
-
     }
 
     /**
@@ -86,10 +124,10 @@ namespace sf {
      * @param fb référnce au tampon en mémoire alloué pour l'affichage
      * des images images chargées en mémoire
      */
-    void DrawImage(Image& img, FrameBuffer& fb) {
-    pixels* buffer = fb.GetBackBuffer();
-    int fbWidth  = (int)fb.GetBufferWidth();
-    int fbHeight = (int)fb.GetBufferHeight();
+    void DrawImage(Image& img, render::Renderer& renderer) {
+    pixels* buffer = renderer.GetWindow().GetFrameBuffer().GetBackBuffer();
+    int fbWidth  = (int)renderer.GetWindow().GetWidth();
+    int fbHeight = (int)renderer.GetWindow().GetHeight();
     
     //calcul du ration de l'affichage
     float scaleX = (float)img.width / (float)img.wantedWidth;
@@ -155,8 +193,8 @@ namespace sf {
      * @param fb la reférence au tampon en mémoire utilisé pour l'affichage du
      * rectangle 
      */
-    void DrawText(stbtt_fontinfo& font, const char* text, int x, int y, float size, pixels color, FrameBuffer& fb) {
-        pixels* buffer = fb.GetBackBuffer();
+    void DrawText(stbtt_fontinfo& font, const char* text, int x, int y, float size, pixels color, render::Renderer& renderer) {
+        pixels* buffer = renderer.GetWindow().GetFrameBuffer().GetBackBuffer();
         float scale = stbtt_ScaleForPixelHeight(&font, size);
         int ascent, descent, lineGap;
         stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap);
@@ -174,13 +212,13 @@ namespace sf {
                 for (int k = 0; k < bw; k++) {
                     int fx = cursorX + xoff + k;
                     int fy = y + ascent + yoff+ j;
-                    if (fx < 0 || fx >= fb.GetBufferWidth())  continue;
-                    if (fy < 0 || fy >= fb.GetBufferHeight()) continue;
+                    if (fx < 0 || fx >= renderer.GetWindow().GetWidth())  continue;
+                    if (fy < 0 || fy >= renderer.GetWindow().GetHeight()) continue;
                     uint8_t coverage = bitmap[j * bw + k];
                     if (coverage == 0) continue;
                     pixels src = color;
                     src.a = (uint8_t)((color.a * coverage) / 255);
-                    int index = fy * fb.GetBufferWidth() + fx;
+                    int index = fy * renderer.GetWindow().GetWidth() + fx;
                     buffer[index] = BlendPixel(color, buffer[index]);
                 }
             }

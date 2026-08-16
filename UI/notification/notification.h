@@ -42,7 +42,7 @@ namespace sf {
         /**
          * @brief Modifie la couleur du bouton selon les états que celui ci peut bien avoir
          */
-        void Render(FrameBuffer& buffer, stbtt_fontinfo& font) override;
+        void Render(render::Renderer& renderer, stbtt_fontinfo& font) override;
 
         void Animation();
         /**

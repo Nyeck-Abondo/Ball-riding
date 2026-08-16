@@ -35,16 +35,6 @@ namespace sf {
             node->mainPos.m_x = 2 * node->mainPos.m_x - node->oldPos.m_x + 0 * deltaTime * deltaTime;
             node->mainPos.m_y = 2 * node->mainPos.m_y - node->oldPos.m_y + gravity * deltaTime * deltaTime;
 
-            if (node->mainPos.m_x > 1750.0f) {
-                node->mainPos.m_x = 1750.0f;
-                node->oldPos.m_x = 1750.0f;
-            } 
-
-            if (node->mainPos.m_x <= 20.0f) {
-                node->mainPos.m_x = 20;
-                node->mainPos.m_x = 20;
-            }
-
             if (node->mainPos.m_y >= 710.0f) {
                 node->mainPos.m_y = 710.0f;
                 node->oldPos.m_y = 710.0f;
@@ -217,24 +207,32 @@ namespace sf {
         m_center.oldPos += delta;
     }
 
-    void Ball::FillShape(FrameBuffer& fb, pixels color) {
+    void Ball::FillShape(render::Renderer& renderer, pixels color) {
         int n = static_cast<int>(m_points.size());
         if (n < 3) return;
 
-        // Bornes verticales du polygone
-        float minY = m_points[0]->mainPos.m_y;
-        float maxY = m_points[0]->mainPos.m_y;
-        for (auto& p : m_points) {
-            minY = std::min(minY, p->mainPos.m_y);
-            maxY = std::max(maxY, p->mainPos.m_y);
+        std::vector<Node> screenPos;
+        screenPos.reserve(m_points.size());
+        for (const auto& p : m_points) screenPos.push_back(*p);
+        //convertion en coordonnees ecran
+        for (auto& p : screenPos) {
+            p.mainPos = renderer.GetCamera().WorldToScreenPos(p.mainPos);
         }
 
-        int width  = static_cast<int>(fb.GetBufferWidth());
-        int height = static_cast<int>(fb.GetBufferHeight());
+        // Bornes verticales du polygone
+        float minY = screenPos[0].mainPos.m_y;
+        float maxY = screenPos[0].mainPos.m_y;
+        for (auto& p : screenPos) {
+            minY = std::min(minY, p.mainPos.m_y);
+            maxY = std::max(maxY, p.mainPos.m_y);
+        }
+
+        int width  = static_cast<int>(renderer.GetWindow().GetWidth());
+        int height = static_cast<int>(renderer.GetWindow().GetHeight());
         int yStart = std::max(0, (int)std::floor(minY));
         int yEnd   = std::min(height - 1, (int)std::ceil(maxY));
 
-        pixels* buffer = fb.GetBackBuffer();
+        pixels* buffer = renderer.GetWindow().GetFrameBuffer().GetBackBuffer();
         std::vector<float> xIntersections;
 
         for (int y = yStart; y <= yEnd; y++) {
@@ -242,8 +240,8 @@ namespace sf {
             float scanY = y + 0.5f; // centre du pixel : évite les cas limites sur les sommets
 
             for (int i = 0; i < n; i++) {
-                const maths::Vector2D& p1 = m_points[i]->mainPos;
-                const maths::Vector2D& p2 = m_points[(i + 1) % n]->mainPos;
+                const maths::Vector2D& p1 = screenPos[i].mainPos;
+                const maths::Vector2D& p2 = screenPos[(i + 1) % n].mainPos;
 
                 if (p1.m_y == p2.m_y) continue; // arête horizontale ignorée
 
@@ -275,15 +273,15 @@ namespace sf {
      * @param fb référence sur le tampon en mémoir utilisé pour afficher les pixels de la pate à l'écran
      * @param color la couleur que prend le membre durant la phase de rendu
      */
-    void Ball::Render(FrameBuffer& fb, pixels color) {
+    void Ball::Render(render::Renderer& renderer, pixels color) {
 
-        FillShape(fb, color);
+        FillShape(renderer, color);
         for (int i = 0; i < m_points.size(); i++) {
             if (i == m_points.size() - 1) {
-                DrawLine(m_points[i], m_points[0], fb);
+                renderer.DrawLine(m_points[i]->mainPos, m_points[0]->mainPos, color);
                 break;
             }
-            DrawLine(m_points[i], m_points[i +1], fb);
+            renderer.DrawLine(m_points[i]->mainPos, m_points[i +1]->mainPos, color);
         }
     }
     

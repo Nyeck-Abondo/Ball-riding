@@ -236,7 +236,7 @@ namespace sf {
     }
 
     
-    void Ellipse::FillShape(FrameBuffer& fb, pixels color) {
+    void Ellipse::FillShape(render::Renderer& renderer, pixels color) {
         int n = static_cast<int>(m_points.size());
         if (n < 3) return;
 
@@ -248,12 +248,12 @@ namespace sf {
             maxY = std::max(maxY, p->mainPos.m_y);
         }
 
-        int width  = static_cast<int>(fb.GetBufferWidth());
-        int height = static_cast<int>(fb.GetBufferHeight());
+        int width  = static_cast<int>(renderer.GetWindow().GetWidth());
+        int height = static_cast<int>(renderer.GetWindow().GetHeight());
         int yStart = std::max(0, (int)std::floor(minY));
         int yEnd   = std::min(height - 1, (int)std::ceil(maxY));
 
-        pixels* buffer = fb.GetBackBuffer();
+        pixels* buffer = renderer.GetWindow().GetFrameBuffer().GetBackBuffer();
         std::vector<float> xIntersections;
 
         for (int y = yStart; y <= yEnd; y++) {
@@ -289,15 +289,15 @@ namespace sf {
         }
     }
 
-    void Ellipse::Render(FrameBuffer& fb, pixels color) {
+    void Ellipse::Render(render::Renderer& renderer, pixels color) {
 
-        FillShape(fb, color);
+        FillShape(renderer, color);
         for (int i = 0; i < m_points.size(); i++) {
             if (i == m_points.size() - 1) {
-                DrawLine(m_points[i], m_points[0], fb);
+                renderer.DrawLine(m_points[i]->mainPos, m_points[0]->mainPos, color);
                 break;
             }
-            DrawLine(m_points[i], m_points[i +1], fb);
+            renderer.DrawLine(m_points[i]->mainPos, m_points[i +1]->mainPos, color);
         }
     }
 

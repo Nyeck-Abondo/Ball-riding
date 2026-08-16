@@ -44,7 +44,7 @@ namespace sf {
         }
     }
 
-    void Button::Render(FrameBuffer& buffer, stbtt_fontinfo& font) {
+    void Button::Render(render::Renderer& renderer, stbtt_fontinfo& font) {
         pixels color;
         switch (m_state) {
             case buttonState::none : 
@@ -63,7 +63,7 @@ namespace sf {
                 {color = pixels(45, 31, 69);}
                 break;
         }
-        DrawRoundedRect(m_pos.m_x, m_pos.m_y, m_width, m_height, m_radius, buffer, color);
+        renderer.DrawRoundedRectangle(m_pos, m_width, m_height, m_radius, 64, color);
 
         //on consid7re 22px par caracteres
         int lenght = static_cast<int>(m_label.size());
@@ -71,7 +71,7 @@ namespace sf {
         int labelX = m_pos.m_x + (m_width - lenght * (m_fontSize - 1) / 2) / 2;
         int labelY = m_pos.m_y + m_height / 2 - 10;
 
-        DrawText(font, m_label.c_str(), labelX, labelY, m_fontSize, pixels(255, 255, 255, 255), buffer);
+        DrawText(font, m_label.c_str(), labelX, labelY, m_fontSize, pixels(255, 255, 255, 255), renderer);
     }
 
 } // namespace sf

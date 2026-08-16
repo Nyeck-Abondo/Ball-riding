@@ -125,7 +125,7 @@ namespace sf {
          * @param fb référence sur le tampon en mémoir utilisé pour afficher les pixels de la pate à l'écran
          * @param color la couleur que prend le membre durant la phase de rendu
          */
-        void Render(FrameBuffer& fb ,pixels color);
+        void Render(render::Renderer& renderer ,pixels color);
 
         void IsColide();
 

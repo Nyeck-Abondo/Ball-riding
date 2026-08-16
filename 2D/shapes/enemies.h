@@ -30,7 +30,7 @@ namespace sf {
 
         //Rendu
         void Update(float clampX, float clampY, Ball& player, float deltaTime);
-        void Render(FrameBuffer& fb, pixels color);
+        void Render(render::Renderer& renderer, pixels color);
     };
 
 } // namespace sf

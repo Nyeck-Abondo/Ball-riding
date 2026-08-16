@@ -6,11 +6,15 @@ with project("render2D"):
     cppdialect("C++17")
     files([
         "render2D/**.cpp",
+        "Renderer2D/**.cpp",
+        "Renderer2D/Camera2D/**.cpp",
         "shapes/**.cpp",
         "shapes/Frog/**.cpp"
     ])
     includedirs([
         "render2D",
+        "Renderer2D",
+        "Renderer2D/Camera2D",
         "shapes",
         "shapes/Frog",
     ])

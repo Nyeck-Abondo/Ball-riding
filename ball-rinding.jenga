@@ -59,5 +59,6 @@ with workspace("ball-riding"):
             defines(["UNICODE", "_UNICODE"]);
         with filter("config::Debug"):
             symbols(True); optimize("OFF"); defines(["_DEBUG"])
+            addcxxflag("-g")
         with filter("config::Release"):
             symbols(False); optimize("speed"); defines(["_RELEASE"])

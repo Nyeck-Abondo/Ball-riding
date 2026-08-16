@@ -11,6 +11,8 @@
 int main() {
     sf::Window* win32 = sf::Window::Create("Ball-riding", 1920, 1080);
     win32->Initialize();
+    sf::render::Renderer renderer(win32);
+    sf::render::Camera camera(sf::maths::Vector2D(1920, 1080), {});
 
     sf::Notification notif(
         "Bienvenue Player !", 
@@ -23,7 +25,7 @@ int main() {
     );
 
     sf::Image picture(
-        "assets/image/Swamp_landscape_for_game_202607082311.jpeg",
+        "assets/image/map.png",
         sf::maths::Vector2D(0, 0),
         1550, 800
     );
@@ -146,18 +148,20 @@ int main() {
         centerPos = p3.GetBody().GetCenter().mainPos + 2;
 
         if (!change) {
-            sf::DrawImage(picture, win32->GetFrameBuffer());
+            sf::DrawMap(picture, renderer);
             
             player.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
             p2.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
             p3.Update(win32->GetWidth() - 50.0f, win32->GetHeight() - 200.0f, 900.0f, deltaTime);
+            camera.SetPosition(player.GetBody().GetCenter().mainPos);
+            renderer.SetView(camera);
             // lg1.Update(500, deltaTime, centerPos);
-            notif.Render(win32->GetFrameBuffer(), font);
+            notif.Render(renderer, font);
             notif.Animation();
-            p2.Render(win32->GetFrameBuffer());
-            p3.Render(win32->GetFrameBuffer());
-            player.Render(win32->GetFrameBuffer());
-            // lg1.Render(win32->GetFrameBuffer(), sf::pixels(255, 185, 150, 200));
+            p2.Render(renderer);
+            p3.Render(renderer);
+            player.Render(renderer);
+            // lg1.Render(renderer, sf::pixels(255, 185, 150, 200));
             win32->Present();
         }
         else {

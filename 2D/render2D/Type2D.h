@@ -2,7 +2,6 @@
 
 #include "../../Maths/math2D.h"
 #include "../../Native-window-system/Plateform/windows/FrameBuffer.h"
-#include "../../UI/uiElement.h"
 
 namespace sf {
 
@@ -56,6 +55,5 @@ namespace sf {
             }
         }
     };
-
     
 } // namespace sf

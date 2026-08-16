@@ -150,11 +150,11 @@ namespace sf {
         }
     }
 
-    void Legs::Render(FrameBuffer& fb ,pixels color) {
+    void Legs::Render(render::Renderer& renderer ,pixels color) {
         for (int i = 0; i < m_ancre.size() - 1; i++) {
-            DrawLine(m_ancre[i].m_pos, m_ancre[i +1].m_pos, color, fb);
+           renderer.DrawLine(m_ancre[i].m_pos, m_ancre[i +1].m_pos, color);
         }
-        m_thigh.Render(fb, pixels(25, 204, 95, 200));
+        m_thigh.Render(renderer, pixels(25, 204, 95, 200));
 
         // maths::Vector2D thighDir = m_ancre[1].m_pos - m_ancre[0].m_pos;
         // thighDir.Normalise();
@@ -168,6 +168,6 @@ namespace sf {
         // maths::Vector2D legPoint01 = pointOnThigh01 + thighPerp  * 13.0f + thighDir * 5.0f;
 
         for (int i = 0; i < m_thighNode.size() - 1; i++)
-        DrawLine(m_thighNode[i+1], m_thighNode[i] , pixels(230, 60, 15, 255), fb);
+        renderer.DrawLine(m_thighNode[i+1], m_thighNode[i] , pixels(230, 60, 15, 255));
     }
 } // namespace sf

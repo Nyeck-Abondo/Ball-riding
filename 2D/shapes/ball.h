@@ -96,12 +96,12 @@ namespace sf {
          * @param fb référence sur le tampon en mémoir utilisé pour afficher les pixels de la pate à l'écran
          * @param color la couleur que prend le membre durant la phase de rendu
          */
-        void Render(FrameBuffer& fb, pixels color) override;
+        void Render(render::Renderer& renderer, pixels color) override;
 
 
         void Update(float clampX, float clampY, float gravity, float deltaTime, int iteration = 4) override;
         void Update(float clampX, float clampY, float gravity, float deltaTime, int iteration , maths::Vector2D pos, maths::Vector2D pos2, int index, int index2);
-        void FillShape(FrameBuffer& fb, pixels color) override;
+        void FillShape(render::Renderer& renderer, pixels color) override;
     };
 
 } // namespace sf

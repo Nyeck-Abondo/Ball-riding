@@ -21,6 +21,22 @@ namespace sf {
                 center.m_y + som.m_x * std::sin(angle) + som.m_y * std::cos(angle)
             );
         }
+
+        std::vector<float> Interpolated (Vector2D i, Vector2D j) {
+            std::vector<float> values;
+            if (i.m_x == j.m_x) {
+                values.push_back(i.m_y);
+                return values;
+            }
+            
+            float a = (j.m_y - i.m_y) / (j.m_x - i.m_x);
+            float d = i.m_y;
+            for (int k = i.m_x; k <= j.m_x; k++) {
+                values.push_back(d);
+                d += a;
+            }
+            return values;
+        }
         
     } // namespace maths
     

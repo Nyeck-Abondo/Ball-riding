@@ -51,8 +51,8 @@ namespace sf {
         PerformAttack(eDirection, playerDst, deltaTime);
     }
 
-    void Enemy::Render(FrameBuffer& fb, pixels color) {
-        m_body->Render(fb, color);
+    void Enemy::Render(render::Renderer& renderer, pixels color) {
+        m_body->Render(renderer, color);
     }
 
 } // namespace sf

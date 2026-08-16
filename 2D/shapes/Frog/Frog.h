@@ -14,7 +14,7 @@ namespace sf {
 
         class Frog {
             private:
-            Ball f_body{sf::maths::Vector2D(500, 200), 50, 8, 23};
+            Ball f_body{sf::maths::Vector2D(500, 200), 60, 8, 40};
             Ball f_head{sf::maths::Vector2D(500, 200), 43, 8, 30};
             maths::Vector2D f_position;
             pixels f_color, f_headColor;
@@ -49,9 +49,9 @@ namespace sf {
             void ApplyDamage(int damage);
             void CatchAnimation();
             void AttackAnimation();
-            void DrawHealthBar(FrameBuffer& fb);
-            void DrawEyes(FrameBuffer& fb);
-            void Render(FrameBuffer& fb);
+            void DrawHealthBar(render::Renderer& renderer);
+            void DrawEyes(render::Renderer& renderer);
+            void Render(render::Renderer& renderer);
             void Update(float clampX, float clampY, float gravity, float deltaTime);
         };
             

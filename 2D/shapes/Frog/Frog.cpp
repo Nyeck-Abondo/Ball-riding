@@ -29,14 +29,18 @@ namespace sf {
             f_body.ApplyDisplacement(move, 100);
         }
 
-        void Frog::DrawHealthBar(FrameBuffer& fb) {
+        void Frog::DrawHealthBar(render::Renderer& renderer) {
             if (f_health > 2 * f_maxhealth / 3) f_healtState = HealthState::GOOD;
             if (f_health <= f_maxhealth / 3 && f_health > f_maxhealth / 3) f_healtState = HealthState::MEDIUM;
             if (f_health < f_maxhealth / 3) f_healtState = HealthState::LOW;
 
             switch (f_healtState) {
                 case HealthState::GOOD :
-                    f_healthBar.innerColor = pixels(31, 186, 63, 200);
+                    renderer.DrawRoundedRectangle(
+                        maths::Vector2D(f_position.m_x - 60.f, f_position.m_y - 80.f),
+                        10, 5, 5, 35,
+                        sf::pixels(36, 27, 6, 240)
+                    );
                 break;
 
                 case HealthState::MEDIUM :
@@ -48,29 +52,28 @@ namespace sf {
                 break;
             }
 
-            f_healthBar.DrawRenctangle(5, fb);
+            //f_healthBar.DrawRenctangle(5, fb);
         }
 
-        void Frog::DrawEyes(FrameBuffer& fb) {
+        void Frog::DrawEyes(render::Renderer& renderer) {
             maths::Vector2D clip = f_head.GetCenter().mainPos;
-            DrawFillCircle(sf::maths::Vector2D(clip.m_x + 20.0f, clip.m_y - 30.0f), 18, f_color, fb);
-            DrawFillCircle(sf::maths::Vector2D(clip.m_x + 20.0f, clip.m_y - 30.0f), 10, sf::pixels(255, 192, 41, 210), fb);
-            DrawFillCircle(sf::maths::Vector2D(clip.m_x - 10.0f, clip.m_y + 10.0f), 5, sf::pixels(58, 171, 72, 200), fb);
-            DrawRoundedRect(
-                sf::maths::Vector2D(clip.m_x + 18.0f, clip.m_y - 30.0f).m_x,
-                sf::maths::Vector2D(clip.m_x + 18.0f, clip.m_y - 30.0f).m_y,
-                10, 5, 2,
-                fb,
+            renderer.DrawFillCircle(sf::maths::Vector2D(clip.m_x + 20.0f, clip.m_y - 30.0f), 18, 60, f_color);
+            renderer.DrawFillCircle(sf::maths::Vector2D(clip.m_x + 20.0f, clip.m_y - 30.0f), 10, 60, sf::pixels(255, 192, 41, 210));
+            renderer.DrawFillCircle(sf::maths::Vector2D(clip.m_x - 10.0f, clip.m_y + 10.0f), 5, 60, sf::pixels(58, 171, 72, 200));
+            renderer.DrawRoundedRectangle(
+                {sf::maths::Vector2D(clip.m_x + 18.0f, clip.m_y - 30.0f).m_x,
+                sf::maths::Vector2D(clip.m_x + 18.0f, clip.m_y - 30.0f).m_y},
+                10, 5, 5, 35,
                 sf::pixels(36, 27, 6, 240)
             );
         }
 
-        void Frog::Render(FrameBuffer& fb) {
-            f_body.Render(fb, f_color);
-            f_head.Render(fb, f_headColor);
+        void Frog::Render(render::Renderer& renderer) {
+            f_body.Render(renderer, f_color);
+            f_head.Render(renderer, f_headColor);
 
-            DrawEyes(fb);
-            DrawHealthBar(fb);
+            DrawEyes(renderer);
+            //DrawHealthBar(renderer);
         }
 
         void Frog::Update(float clampX, float clampY, float gravity, float deltaTime) {
