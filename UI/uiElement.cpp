@@ -53,16 +53,13 @@ namespace sf {
             int imgY = (int)(worldY - img.pos.m_y);
             if (imgY < 0 || imgY >= img.height) continue;
 
-            int rowSrc = imgY * img.width;
-            int rowDst = sy * winWidth;
-
             for (int sx = 0; sx < winWidth; sx++) {
                 float worldX = topView.m_x + (sx / scaleX) / zoom;
                 int imgX = (int)(worldX - img.pos.m_x);
                 if (imgX < 0 || imgX >= img.width) continue;
 
-                int srcIndex = rowSrc + imgX;
-                int dstIndex = rowDst + sx;
+                int srcIndex = imgY * img.width + imgX;
+                int dstIndex = sy * winWidth + sx;
 
                 buffer[dstIndex] = BlendPixel(img.pixel[srcIndex], buffer[dstIndex]);
             }
